@@ -7,21 +7,18 @@ class Customer(models.Model):
     """
     Name: Customer model definition
     """
-    SEX_TYPES = (
-        ('M', _('Male')),
-        ('F', _('Feminine')),
-    )
+    
     name = models.CharField(max_length=132)
 
     email = models.EmailField()
 
     phone = models.CharField(max_length=132)
 
-    address = models.CharField(max_length=64)
+    address = models.CharField(max_length=100)
 
-    sex = models.CharField(max_length=1, choices=SEX_TYPES)
+    #sex = models.CharField(max_length=1, choices=SEX_TYPES)
 
-    age = models.CharField(max_length=12)
+    #age = models.CharField(max_length=12)
 
     city = models.CharField(max_length=32)
 
@@ -109,4 +106,5 @@ class Article(models.Model):
     def get_total(self):
         total = self.quantity * self.unit_price   
         return total 
+    
         
