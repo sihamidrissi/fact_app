@@ -17,6 +17,7 @@
 <!-- jquery-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
 
 <title>Facture</title>
@@ -26,7 +27,7 @@
      <header>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">INVOICE SYSTEM</a>
+            <a class="navbar-brand" href="/">INVOICE SYSTEM</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -73,10 +74,10 @@
      <div class="container">
       <div class="wrapper">
        <br>
-       {% for messages in messages %}
-       <div class="alert {{message.tags}} alert.dismissible" role="alert">
-        <button type="button" class="close" data.dismiss="alert" aria.label="Close ">
-          <span aria.hidden="true" >&times;</span>
+       {% for message in messages %}
+       <div class="alert {{message.tags}} alert.dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close ">
+          <span aria-hidden="true" >&times;</span>
         </button>
         {{ message|safe }}
 
@@ -102,7 +103,7 @@
     <div class ="text-center p-3" style="background-color: rgba(0,0,0,0.2);">
 
     invoice system © 2024 copyright:
-    <a href="https://BrutMartex.com">siham</a>
+    <a href="https://BrutMartex.com">BrutMartex</a>
 
     </div>
 

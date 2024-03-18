@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.views import View
 from .models import *
 from django.contrib import messages
+from django.db import transaction 
+
 
 
 class HomeView(View):
     """Main view"""
-    templates_name= 'index.html'
+    template_name= 'index.html'
 
     invoices= Invoice.objects.select_related('customer','save_by').all()
 
@@ -17,11 +19,11 @@ class HomeView(View):
     
     def get(self, request, *args, **kwags):
 
-        return render(request,self.templates_name, self.context)
+        return render(request,self.template_name, self.context)
     
 
     def post(self,request, *args, **kwags):
-          return render(request,self.templates_name, self.context)
+          return render(request,self.template_name, self.context)
 
 class AddCustomerView(View):
     """ Add new customer """
@@ -49,6 +51,7 @@ class AddCustomerView(View):
                 messages.success(request, "Customer registered successfully.")
                 # Include success message in context
                 context = {'success_message': "Customer registered successfully."}
+               
             else:
                 messages.error(request, "Sorry, please try again. The sent data is corrupt.")
                 context = {}
@@ -58,3 +61,76 @@ class AddCustomerView(View):
 
         # Render the template with the context
         return render(request, self.template_name, context)
+    
+
+class AddInvoiceView(View):
+
+    """ add a new invoice view """
+
+    template_name='add_invoice.html'
+    customers= Customer.objects.select_related('save_by').all()
+    context={
+      'customers' : customers 
+    }
+
+    def get(self, request,*args, **kwargs ):
+        return render(request, self.template_name, self.context)
+    
+    @transaction.atomic()
+    def post (self, request, *args, **kwargs):
+        items = []
+
+        try: 
+
+            customer = request.POST.get('customer')
+
+            type = request.POST.get('invoice_type')
+
+            articles = request.POST.getlist('article')
+
+            qties = request.POST.getlist('qty')
+
+            units = request.POST.getlist('unit')
+
+            total_a = request.POST.getlist('total-a')
+
+            total = request.POST.get('total')
+
+            comment = request.POST.get('commment')
+
+            invoice_object = {
+                'customer_id': customer,
+                'save_by': request.user,
+                'total': total,
+                'invoice_type': type,
+                'comments': comment
+            }
+
+            invoice = Invoice.objects.create(**invoice_object)
+
+            for index, article in enumerate(articles):
+
+                data = Article(
+                    invoice_id = invoice.id,
+                    name = article,
+                    quantity=qties[index],
+                    unit_price = units[index],
+                    total = total_a[index],
+                )
+
+                items.append(data)
+
+            created = Article.objects.bulk_create(items)   
+
+            if created:
+                messages.success(request, "Data saved successfully.") 
+            else:
+                messages.error(request, "Sorry, please try again the sent data is corrupt.")   
+        except Exception as e:
+            messages.error(request, f"Sorry the following error has occured {e}.")    
+
+        return render(request, self.template_name, self.context)
+
+
+    
+
