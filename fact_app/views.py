@@ -111,8 +111,7 @@ class AddCustomerView(LoginRequiredSuperuserMixim, View):
             'name': request.POST.get('name'),
             'email': request.POST.get('email'),
             'phone': request.POST.get('phone'),
-            'address': request.POST.get('address'),
-           
+            
             'city': request.POST.get('city'),
             'zip_code': request.POST.get('zip'),
             'save_by': request.user
