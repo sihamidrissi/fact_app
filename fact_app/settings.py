@@ -1,5 +1,6 @@
 
 
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -118,6 +119,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 WKHTMLTOPDF_CMD = 'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
 LOGIN_URL = 'login'
+# settings.py
 
-
-
+# Set session expiration to 0 to require login every time
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

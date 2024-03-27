@@ -1,3 +1,4 @@
+
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.admin.views.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -27,4 +28,3 @@ class LoginRequiredSuperuserMixim(UserPassesTestMixin):
 
     def test_func(self):
         return self.request.user.is_superuser
-
