@@ -10,19 +10,16 @@ class Customer(models.Model):
     
     name = models.CharField(max_length=132)
 
-    email = models.EmailField()
+    #email = models.EmailField()
 
-    phone = models.CharField(max_length=132)
+    #phone = models.CharField(max_length=132)
+    address= models.CharField(max_length = 300)
 
-    #address = models.CharField(max_length=100)
-
-    #sex = models.CharField(max_length=1, choices=SEX_TYPES)
-
-    #age = models.CharField(max_length=12)
 
     city = models.CharField(max_length=32)
 
     zip_code = models.CharField(max_length=16)
+    ICE = models.IntegerField
 
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -45,9 +42,9 @@ class Invoice(models.Model):
     """
 
     INVOICE_TYPE = (
-        ('R', _('RECEIPT')),
-        ('P', _('PROFORMA INVOICE')),
-        ('I', _('INVOICE'))
+        ('E', _('Export')),
+        ('I', _('Import')),
+        ('V', _('Vente TFZ'))
     )
 
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)

@@ -71,7 +71,7 @@
             color: #333; /* Adjusted icon color */
         }
         .input-group input {
-            padding: 10px 30px;
+            padding: 10px;
             border-radius: 4px;
             border: 1px solid #ccc;
             width: 100%;
@@ -106,66 +106,72 @@
                 <input id="password" type="password" name="password" placeholder="Password" required>
             </div>
             <button type="submit">Sign In</button>
+            <p>Don't have an account yet? <a href="#" id="signup-link">Sign Up</a></p>
         </form>
 
         <!-- Sign-up form (initially hidden) -->
-        <div id="signup-form" style="display: none;">
+        <form id="signup-form" style="display: none;" action="{% url 'signup' %}" method="post">
+            {% csrf_token %}
             <h3>Create your account!</h3>
-            <form method="post" action="/signup">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Create A Username (use only letters and numbers)" Required>
-                </div>
-                <div class="form-group">
-                    <label for="fname">First Name</label>
-                    <input type="text" class="form-control" id="fname" name="fname" placeholder="Enter Your First Name" Required>
-                </div>
-                <div class="form-group">
-                    <label for="lname">Last Name</label>
-                    <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter Your Last Name" Required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email Address" Required>
-                </div>
-                <div class="form-group">
-                    <label for="pass1">Password</label>
-                    <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Create Your Password" Required>
-                </div>
-                <div class="form-group">
-                    <label for="pass2">Confirm Password</label>
-                    <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Confirm Your Password" Required>
-                </div>
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-            </form>
-        </div>
-
-        <div>
-            <p>Don't have an account yet? <a href="#" id="signup-link">Sign Up</a></p>
-        </div>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="signup-username" name="username" placeholder="Create A Username" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="signup-fname" name="fname" placeholder="Enter Your First Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="signup-lname" name="lname" placeholder="Enter Your Last Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="signup-email" name="email" placeholder="Enter Your Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="signup-pass1" name="pass1" placeholder="Create Your Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="signup-pass2" name="pass2" placeholder="Confirm Your Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <p>Already have an account? <a href="#" id="signin-link">Sign In</a></p>
+        </form>
     </div>
 
     <!-- JavaScript to toggle between sign-in and sign-up forms -->
     <script>
-        // Function to toggle between sign-in and sign-up forms
-        function toggleForms() {
-            var signinForm = document.getElementById("signin-form");
-            var signupForm = document.getElementById("signup-form");
+        document.addEventListener("DOMContentLoaded", function() {
+            // Function to toggle between sign-in and sign-up forms
+            function toggleForms() {
+                var signinForm = document.getElementById("signin-form");
+                var signupForm = document.getElementById("signup-form");
 
-            if (signinForm.style.display === "block") {
-                signinForm.style.display = "none";
-                signupForm.style.display = "block";
-            } else {
-                signinForm.style.display = "block";
-                signupForm.style.display = "none";
+                // Toggle the visibility of the forms
+                if (signinForm.style.display === "block") {
+                    signinForm.style.display = "none";
+                    signupForm.style.display = "block";
+                } else {
+                    signinForm.style.display = "block";
+                    signupForm.style.display = "none";
+                }
             }
-        }
 
-        // Event listener for the "Sign Up" link
-        document.getElementById("signup-link").addEventListener("click", function(event) {
-            event.preventDefault(); // Prevent the default link behavior
-            toggleForms(); // Toggle between sign-in and sign-up forms
+            // Event listener for the "Sign Up" link
+            document.getElementById("signup-link").addEventListener("click", function(event) {
+                event.preventDefault(); // Prevent the default link behavior
+                toggleForms(); // Toggle between sign-in and sign-up forms
+            });
+
+            // Event listener for the "Sign In" link
+           
+            document.getElementById("signin-link").addEventListener("click", function(event) {
+                event.preventDefault(); // Prevent the default link behavior
+                toggleForms(); // Toggle between sign-in and sign-up forms
+            });
         });
     </script>
 </body>

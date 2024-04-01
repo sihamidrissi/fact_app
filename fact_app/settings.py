@@ -118,7 +118,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 WKHTMLTOPDF_CMD = 'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
-LOGIN_URL = 'login'
+LOGIN_URL = 'signin'
 # settings.py
 
 # Set session expiration to 0 to require login every time

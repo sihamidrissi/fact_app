@@ -8,12 +8,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse
 from django.views import View
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 from fact_app import settings
 from .decorators import superuser_required
@@ -22,15 +24,26 @@ from .utils import pagination, get_invoice
 
 import datetime
 import pdfkit
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_protect
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import QueryDict
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from io import BytesIO
+    
 
 class HomeView(LoginRequiredMixin, View):
     """Main view"""
-
-    template_name = 'index.html'
+    login_url = '/access/'
+    templates_name = 'index.html'
     invoices = Invoice.objects.select_related('customer', 'save_by').all().order_by('-invoice_date_time')
     context = {'invoices': invoices}
+    items_per_page = 10
 
-    def index(request):
+    @classmethod
+    def index(cls, request):
         # Check if the user is logged in
         if request.user.is_authenticated:
             # If the user is logged in, render the index.html page
@@ -40,9 +53,82 @@ class HomeView(LoginRequiredMixin, View):
             return redirect('access')
 
     def get(self, request, *args, **kwargs):
+        search_query = request.GET.get('search')
+        invoices = Invoice.objects.select_related('customer', 'save_by').order_by('-invoice_date_time')
+
+        paginator = Paginator(invoices, self.items_per_page)  # Show `items_per_page` invoices per page
+        page_number = request.GET.get('page')
+
+        try:
+            invoices = paginator.page(page_number)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            invoices = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            invoices = paginator.page(paginator.num_pages)
+
+        if search_query:
+            invoices = invoices.filter(
+                Q(pk__icontains=search_query) |
+                Q(customer__name__icontains=search_query) |
+                Q(invoice_date_time__icontains=search_query) |
+                Q(total__icontains=search_query) |
+                Q(paid__icontains=search_query) |
+                Q(invoice_type__icontains=search_query)
+            )
+
+        context = {'invoices': invoices, 'search_query': search_query}
+        return render(request, self.templates_name, context)
+    def post(self, request, *args, **kwagrs):
+
+        # modify an invoice
+
+        if request.POST.get('id_modified'):
+
+            paid = request.POST.get('modified')
+
+            try: 
+
+                obj = Invoice.objects.get(id=request.POST.get('id_modified'))
+
+                if paid == 'True':
+
+                    obj.paid = True
+
+                else:
+
+                    obj.paid = False 
+
+                obj.save() 
+
+                messages.success(request,  ("Change made successfully.")) 
+
+            except Exception as e:   
+
+                messages.error(request, f"Sorry, the following error has occured {e}.")      
+
+        # deleting an invoice    
+
+        if request.POST.get('id_supprimer'):
+
+            try:
+
+                obj = Invoice.objects.get(pk=request.POST.get('id_supprimer'))
+
+                obj.delete()
+
+                messages.success(request, ("The deletion was successful."))   
+
+            except Exception as e:
+
+                messages.error(request, f"Sorry, the following error has occured {e}.")      
+
         items = pagination(request, self.invoices)
+
         self.context['invoices'] = items
-        return render(request, self.template_name, self.context)
+
+        return render(request, self.templates_name, self.context)  
 
 class AddCustomerView(LoginRequiredMixin, View):
     """Add new customer view"""
@@ -55,8 +141,8 @@ class AddCustomerView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         data = {
             'name': request.POST.get('name'),
-            'email': request.POST.get('email'),
-            'phone': request.POST.get('phone'),
+            'email': request.POST.get('address'),
+            'phone': request.POST.get('ICE'),
             'city': request.POST.get('city'),
             'zip_code': request.POST.get('zip'),
             'save_by': request.user
@@ -158,6 +244,7 @@ def get_invoice_pdf(request, *args, **kwargs):
     return response
 
 # Login
+@csrf_protect
 def access(request):
     if request.method == "POST":
         if 'login' in request.POST:
@@ -239,8 +326,8 @@ def signin(request):
             login(request, user)
             return redirect('index')
         else:
-            messages.error(request, "Error: This username is unrecognized.")
-            return render(request, "authentication/access.html")
+           messages.error(request, "Error: This username/password is unrecognized .")
+           return render(request, "authentication/access.html")
 
     return render(request, "authentication/access.html", context_instance=RequestContext(request))
 
@@ -248,3 +335,84 @@ def signout(request):
     logout(request)
     messages.success(request, "Logged out successfully!")
     return redirect('index')
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        print(request.POST)  # Debug: Print form data to console
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Updating the session with the new password hash to keep the user logged in
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')  # Redirect to the same page after successful password change
+        else:
+            # Display form errors
+            print(form.errors)  # Debug: Print form errors to console
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = PasswordChangeForm(user=request.user)
+    
+    return render(request, 'change_password.html', {'form': form})
+
+from django.http import HttpResponse
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+def generate_pdf(request, invoice_number):
+    # Replace these lines with actual code to retrieve invoice data
+    obj = Invoice.objects.get(pk=invoice_number)  # Assuming you have a model named Invoice
+    articles = Article.objects.filter(invoice=obj)  # Assuming Article is a related model
+
+    # Create a buffer to store the PDF content
+    buffer = BytesIO()
+
+    # Create a PDF document
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+
+    # Define styles for the document
+    styles = getSampleStyleSheet()
+    style_normal = styles['Normal']
+    style_heading = styles['Heading1']
+
+    # Add content to the PDF
+    elements = []
+
+    # Add the invoice heading
+    elements.append(Paragraph(f"Invoice #{invoice_number}", style_heading))
+
+    # Add customer information
+    elements.append(Paragraph(f"Customer: {obj.customer.name}", style_normal))
+    elements.append(Paragraph(f"Address: {obj.customer.address}, {obj.customer.city}, Morocco", style_normal))
+    elements.append(Paragraph("", style_normal))  # Add empty line for spacing
+
+    # Create a table for the invoice items
+    data = [["Items", "Product ID", "Quantities", "Unit Price", "Subtotal"]]
+    for article in articles:
+        data.append([article.name, article.id, article.quantity, article.unit_price, article.get_total])
+    table_style = TableStyle([('GRID', (0,0), (-1,-1), 1, (0.5,0.5,0.5))])
+    t = Table(data)
+    t.setStyle(table_style)
+    elements.append(t)
+    elements.append(Paragraph("", style_normal))  # Add empty line for spacing
+
+    # Add total amount
+    elements.append(Paragraph(f"Total: {obj.get_total}", style_normal))
+
+    # Build the PDF document
+    doc.build(elements)
+
+    # Set the buffer position to the beginning
+    buffer.seek(0)
+
+    # Create a Django response and return the PDF file
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="invoice_{}.pdf"'.format(invoice_number)
+    response.write(buffer.getvalue())
+    buffer.close()
+    return response

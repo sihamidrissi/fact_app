@@ -1,174 +1,141 @@
-
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block content %}
 
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        .invoice-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .invoice-header h4 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .invoice-header .btn {
+            display: none;
+        }
+        .invoice-body,
+        .invoice-footer {
+            padding: 20px 0;
+        }
+        .invoice-body table {
+            font-size: 16px;
+        }
+    }
+</style>
+
 <div class="container">
-    <div class="row gutters">
-    	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-    		<div class="card">
-    			<div class="card-body p-0">
-    				<div class="invoice-container">
-    					<div class="invoice-header">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="invoice-container">
+                        <div class="invoice-header p-4 bg-primary text-white">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h4 class="mb-0">Invoice</h4>
+                                </div>
+                                <div class="col-md-6 text-right no-print">
+                                    <button class="btn btn-light" onclick="window.print()">
+                                        <i class="fa fa-print"></i> Print
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
     
-    						<!-- Row start -->
-    						<div class="row gutters">
-    							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-    								<div class="custom-actions-btns mb-5">
-    									<a href="{% url 'invoice-pdf' pk=obj.pk %}" class="btn btn-primary">
-    										<i class="icon-download"></i> Download
-    									</a>
-    									<a href="#" class="btn btn-secondary">
-    										<i class="icon-printer"></i> Print
-    									</a>
-    								</div>
-    							</div>
-    						</div>
-    						<!-- Row end -->
+                        <div class="invoice-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <img src="{% static 'images/logo.png' %}" alt="BRUMARTEX" class="invoice-logo">
+                                        <address class="mt-2">
+                                            Zone franche ilot N116 module N10<br>
+                                            Tanger 90090, Maroc
+                                        </address>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <address class="mb-4">
+                                        <strong>{{ obj.customer.name }}</strong><br>
+                                        {{ obj.customer.address }}, {{ obj.customer.city }}, Morocco
+                                    </address>
+                                    <div>
+                                        <span class="font-weight-bold">Invoice Type:</span> {{ obj.get_invoice_type_display }}<br>
+                                        <span class="font-weight-bold">Invoice Date:</span> {{ obj.invoice_date_time }}
+                                    </div>
+                                </div>
+                            </div>
     
-    						<!-- Row start -->
-    						<div class="row gutters">
-    							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-    								<a href="BRUMARTEX" class="invoice-logo">
-    									BRUMARTEX
-    								</a>
-    							</div>
-    							<div class="col-lg-6 col-md-6 col-sm-6">
-    								<address class="text-right">
-                                        Zone franche ilot N116 module N10, Tanger 90090<br>
-    									Maroc, Tanger 90090<br>
-    								
-    								</address>
-    							</div>
-    						</div>
-    						<!-- Row end -->
+                            <div class="table-responsive mt-4">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Items</th>
+                                            <th>Product ID</th>
+                                            <th>Quantities</th>
+                                            <th>Unit Price</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for article in articles %}
+                                        <tr>
+                                            <td>{{ article.name }}</td>
+                                            <td>{{ article.id }}</td>
+                                            <td>{{ article.quantity }}</td>
+                                            <td>{{ article.unit_price }}</td>
+                                            <td>{{ article.get_total }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td colspan="4" class="text-right">Subtotal</td>
+                                            <td>{{ obj.subtotal }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right">Shipment &amp; Handling</td>
+                                            <td>00.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right">Tax</td>
+                                            <td>00.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right">Total</td>
+                                            <td>{{ obj.get_total }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">Comment: {{ obj.comments }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
     
-    						<!-- Row start -->
-    						<div class="row gutters">
-    							<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-    								<div class="invoice-details">
-    									<address>
-    										{{obj.customer.name}}<br>
-    										{{obj.customer.address}}, {{obj.customer.city}}, Morocco
-    									</address>
-    								</div>
-    							</div>
-    							<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-    								<div class="invoice-details">
-    									<div class="invoice-num">
-    										<div>{{obj.get_invoice_type_display}} - #00{{obj.id}}</div>
-    										<div>{{obj.invoice_date_time}}</div>
-    									</div>
-    								</div>													
-    							</div>
-    						</div>
-    						<!-- Row end -->
+                            <div class="row justify-content-end mt-4">
+                                <div class="col-md-4">
+                                    <div class="text-right">
+                                        PAID: 
+                                        {% if obj.paid %}
+                                            <img class="icon" src="{% static 'images/icon-yes.png' %}" alt="True">
+                                        {% else %}
+                                            <img class="icon" src="{% static 'images/icon-no.png' %}" alt="False">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
     
-    					</div>
-    
-    					<div class="invoice-body">
-    
-    						<!-- Row start -->
-    						<div class="row gutters">
-    							<div class="col-lg-12 col-md-12 col-sm-12">
-    								<div class="table-responsive">
-    									<table class="table custom-table m-0">
-    										<thead>
-    											<tr>
-    												<th>Items</th>
-													<th>Product ID</th>
-													<th>Quantities</th>
-													<th>Unit Price</th>
-													<th>Subtotal</th>
-    											</tr>
-    										</thead>
-    										<tbody>
-                                              {% for article in articles %}  
-                                              
-    											<tr>
-
-                                                   
-
-                                                    <td>
-    													{{ article.name }}
-    													
-    												</td>
-
-													<td>
-    													{{ article.id }}
-    													
-    												</td>
-
-													<td>
-    													{{ article.quantity }}
-    													
-    												</td>
-
-													<td>
-    													{{ article.unit_price }}
-    													
-    												</td>
-
-													<td>
-    													{{ article.get_total }}
-    													
-    												</td>
-
-                                                    
-    												
-    											</tr>
-                                               {% endfor %} 
-    											
-    											
-    											<tr>
-    												<td>Comment: {{obj.comments}}</td>
-    												<td colspan="2">
-														<p>
-															Subtotal<br>
-															Shipment &amp; Handling<br>
-															Tax<br>
-														</p>
-    													<h5 class="text-success"><strong>Total</strong></h5>
-    												</td>			
-    												<td>
-    													<p>
-    														{{obj.get_total}} MAD<br>
-    														00.00 MAD<br>
-    														00.00 MAD<br>
-    													</p>
-    													<h5 class="text-success"><strong>{{obj.get_total}} MAD</strong></h5>
-    												</td>
-                                                    <td> 
-                                                            PAID:                    
-
-                                                        {% if obj.paid  %}
-
-                                                           <img class="icon" src="{% static 'images/icon-yes.png' %}" alt="True">
-                                                        {% else %}
-                                                            <img class="icon" src="{% static 'images/icon-no.png' %}" alt="False">
-   
-                                                        {% endif %}
-                                                    </td>
-    											</tr>
-    										</tbody>
-    									</table>
-    								</div>
-    							</div>
-    						</div>
-    						<!-- Row end -->
-    
-    					</div>
-    
-    					<div class="invoice-footer">
-    						Thank you 
-    					</div>
-    
-    				</div>
-    			</div>
-    		</div>
-    	</div>
+                        <div class="invoice-footer p-4 bg-light">
+                            <p class="mb-0">Thank you for your business!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
