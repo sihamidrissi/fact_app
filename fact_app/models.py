@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MaxValueValidator
+
 
 
 class Customer(models.Model):
@@ -13,13 +15,16 @@ class Customer(models.Model):
     #email = models.EmailField()
 
     #phone = models.CharField(max_length=132)
-    address= models.CharField(max_length = 300)
+    address = models.CharField(max_length=300, default='Unknown Address')
+
 
 
     city = models.CharField(max_length=32)
 
     zip_code = models.CharField(max_length=16)
-    ICE = models.IntegerField
+    ICE = models.IntegerField(default=0)
+    CP = models.IntegerField(default=0)
+    CIF= models.IntegerField(default=0)
 
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -42,7 +47,6 @@ class Invoice(models.Model):
     """
 
     INVOICE_TYPE = (
-        ('E', _('Export')),
         ('I', _('Import')),
         ('V', _('Vente TFZ'))
     )
@@ -62,6 +66,16 @@ class Invoice(models.Model):
     invoice_type = models.CharField(max_length=1, choices=INVOICE_TYPE)
 
     comments = models.TextField(null=True, max_length=1000, blank=True)
+
+    invoice_number = models.PositiveIntegerField(
+        unique=True,
+        null=True,
+        blank=True,
+        validators=[MaxValueValidator(999999)] )
+    
+    order_number= models.CharField(default='',max_length=200000000)
+
+    remorque_number=models.CharField(default='',max_length=1000)
 
     
     class Meta:
@@ -88,12 +102,20 @@ class Article(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=32)
+    nbre_GB= models.IntegerField(default=0)
+
 
     quantity = models.IntegerField()
 
-    unit_price = models.DecimalField(max_digits=1000, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=1000000000, decimal_places=2)
 
-    total = models.DecimalField(max_digits=1000, decimal_places=2)
+    total = models.DecimalField(max_digits=1000000000, decimal_places=2)
+
+    order_number = models.CharField(default='', max_length=20000000)
+    remorque_number = models.CharField(default='', max_length=10000000)
+
+
+   
 
     class Meta:
         verbose_name = 'Article'

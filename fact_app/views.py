@@ -1,5 +1,6 @@
 # views.py
 
+from decimal import Decimal
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -141,10 +142,12 @@ class AddCustomerView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         data = {
             'name': request.POST.get('name'),
-            'email': request.POST.get('address'),
-            'phone': request.POST.get('ICE'),
+            'address': request.POST.get('address'),
+            'ICE': request.POST.get('ICE'),
             'city': request.POST.get('city'),
             'zip_code': request.POST.get('zip'),
+            'CP': request.POST.get('CP'),
+            'CIF': request.POST.get('CIF'),
             'save_by': request.user
         }
 
@@ -170,52 +173,62 @@ class AddInvoiceView(LoginRequiredMixin, View):
         context = {'customers': customers}
         return render(request, self.template_name, context)
 
-    @transaction.atomic()
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
-        items = []
         try:
-            customer = request.POST.get('customer')
-            type = request.POST.get('invoice_type')
+          with transaction.atomic():
+            customer_id = request.POST.get('customer')
+            invoice_type = request.POST.get('invoice_type')
             articles = request.POST.getlist('article')
             qties = request.POST.getlist('qty')
             units = request.POST.getlist('unit')
             total_a = request.POST.getlist('total-a')
-            total = request.POST.get('total')
-            comment = request.POST.get('comment')
+            nbre_GB = request.POST.get('nbre_GB')
+            invoice_number = request.POST.get('invoice_number')
+            order_number= request.POST.get('order_number')
+            remorque_number= request.POST.get('remorque_number')
 
-            invoice_object = {
-                'customer_id': customer,
-                'save_by': request.user,
-                'total': total,
-                'invoice_type': type,
-                'comments': comment
-            }
+            
+            # Calculate total invoice amount
+            total_invoice_amount = sum(Decimal(total) for total in total_a)
 
-            invoice = Invoice.objects.create(**invoice_object)
+            # Create the invoice object
+            invoice = Invoice.objects.create(
+                customer_id=customer_id,
+                save_by=request.user,
+                total=total_invoice_amount,
+                invoice_type=invoice_type,
+                invoice_number=invoice_number,
+                order_number= order_number,
+                remorque_number= remorque_number
+            )
 
+            # Create article objects
             for index, article in enumerate(articles):
+                nbre_GB_value = nbre_GB if nbre_GB else 0
+                qty_value = qties[index] if index < len(qties) else 0
+                unit_value = units[index] if index < len(units) else 0
+                total_value = total_a[index] if index < len(total_a) else 0
+              
                 data = Article(
-                    invoice_id=invoice.id,
+                    invoice=invoice,
                     name=article,
-                    quantity=qties[index],
-                    unit_price=units[index],
-                    total=total_a[index],
+                    nbre_GB=nbre_GB_value,
+                    quantity=qty_value,
+                    unit_price=unit_value,
+                    total=total_value,
                 )
-                items.append(data)
+                data.save()
 
-            created = Article.objects.bulk_create(items)
+            messages.success(request, "Data saved successfully.")
 
-            if created:
-                messages.success(request, "Data saved successfully.")
-            else:
-                messages.error(request, "Sorry, please try again. The data sent is corrupt.")
         except Exception as e:
             messages.error(request, f"Sorry, the following error has occurred: {e}")
 
         customers = Customer.objects.select_related('save_by').all()
         context = {'customers': customers}
         return render(request, self.template_name, context)
-
+    
 class InvoiceVisualizationView(LoginRequiredMixin, View):
     """View to visualize the invoice"""
 

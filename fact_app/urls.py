@@ -14,7 +14,7 @@ urlpatterns = [
     path('signin/', views.signin, name="signin"),
     path('signout/', views.signout, name="signout"),
     path('change_password/', views.change_password, name='change_password'),
-    
-    path('generate-pdf/<int:invoice_id>/', views.generate_pdf, name='generate_pdf')
+    path('generate-pdf/<int:invoice_id>/', views.generate_pdf, name='generate_pdf'),
+    path('admin/', admin.site.urls),
 
 ]
