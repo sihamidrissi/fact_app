@@ -88,8 +88,8 @@ class Invoice(models.Model):
     @property
     def get_total(self):
         articles = self.article_set.all()   
-        total = sum(article.get_total for article in articles)
-        return total    
+        total = sum(article.total for article in self.article_set.all())
+        return total 
 
 
 class Article(models.Model):
@@ -111,7 +111,7 @@ class Article(models.Model):
 
     total = models.DecimalField(max_digits=1000000000, decimal_places=2)
 
-    order_number = models.CharField(default='', max_length=20000000)
+    order_number = models.CharField(default='', max_length=20000000) #colis
     remorque_number = models.CharField(default='', max_length=10000000)
 
 

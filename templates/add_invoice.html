@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+
 <div class="container my-5">
-    <h1 class="text-capitalize text-center bg-dark text-white p-3">Register a new invoice</h1>
+    <h1 class="text-capitalize text-center bg-dark text-white p-3">Enregistrer une nouvelle facture</h1>
 
     <form method="post">
         {% csrf_token %}
 
         <div class="form-group">
-            <label for="customer">Customer</label>
+            <label for="customer">Client</label>
             <select name="customer" class="form-control" id="customer">
-                <option selected disabled>Choose the customer...</option>
+                <option selected disabled>Choisissez le client...</option>
                 {% for customer in customers %}
                     <option value="{{customer.id}}">{{forloop.counter}}-{{customer.name}}</option>
                 {% endfor %}
@@ -18,9 +20,9 @@
         </div>
 
         <div class="form-group">
-            <label for="invoice">Invoice Type</label>
+            <label for="invoice">Type de facture</label>
             <select name="invoice_type" class="form-control" id="invoice">
-                <option selected disabled>Choose the invoice type...</option>
+                <option selected disabled>Choisissez le type de facture...</option>
                 <option value="I">Import</option>
                 <option value="V">Vente TFZ</option>
             </select>
@@ -29,39 +31,39 @@
         <div id="wrapper">
             <!-- Initial line item -->
             <div class="form-group">
-                <label for="invoice-number">Invoice Number</label>
+                <label for="invoice-number">Numéro de facture</label>
                 <input required name="invoice_number" type="text" class="form-control" id="invoice-number">
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="order-number">Order Number</label>
-                    <input required name="order_number" type="text" class="form-control" id="order-number">
+                    <label for="order-number">Colis</label>
+                    <input  name="order_number" type="text" class="form-control" id="order-number">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="remorque-number">Remorque Number</label>
-                    <input required name="remorque_number" type="text" class="form-control" id="remorque-number">
+                    <label for="remorque-number">Numéro de remorque</label>
+                    <input name="remorque_number" type="text" class="form-control" id="remorque-number">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-4">
-                    <label for="article-1">Item Name</label>
+                    <label for="article-1">Description</label>
                     <input required name="article" type="text" class="form-control" id="article-1">
                 </div>
                
                 <div class="form-group col-md-2">
                     <label for="nbre_gb-1">Nbre GB</label>
-                    <input required name="nbre_GB" type="number" min="1" step="0.1" class="form-control" id="nbre_gb-1">
+                    <input  name="nbre_GB" type="number" min="1" step="0.1" class="form-control" id="nbre_gb-1">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="qty-1">Poid/Kg</label>
                     <input required name="qty" type="number" min="1" step="0.1" class="form-control" id="qty-1">
                 </div>
                 <div class="form-group col-md-2">
-                    <label for="unit-1">Unit Price</label>
+                    <label for="unit-1">Prix unitaire</label>
                     <input required name="unit" type="number" min="1" step="0.1" onchange="handleChangeSingleArticle(this.id)" class="form-control" id="unit-1">
                 </div>
                 <div class="form-group col-md-2">
-                    <label for="total-a-1">Total</label>
+                    <label for="total-a-1">Montant Total</label>
                     <input required name="total-a" type="number" min="1" step="0.1" readonly class="form-control" id="total-a-1">
                 </div>
             </div>
@@ -74,15 +76,15 @@
             <input required name="total" type="number" min="1" step="0.1" readonly class="form-control" id="total">
         </div>
 
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
     </form>
 
     <div class="row mt-3">
         <div class="col-md-6">
-            <button id="btn-add" class="btn btn-outline-danger w-100">Add a New Item Line</button>
+            <button id="btn-add" class="btn btn-outline-danger w-100">Ajouter une nouvelle ligne d'article</button>
         </div>
         <div class="col-md-6">
-            <button id="btn-remove" class="btn btn-outline-warning w-100">Remove Last Item Line</button>
+            <button id="btn-remove" class="btn btn-outline-warning w-100">Supprimer la dernière ligne d'article</button>
         </div>
     </div>
 </div>
@@ -97,7 +99,7 @@
         let formAdd = `
             <div class="form-row">
                 <div class="form-group col-md-4">
-                    <label for="article-${itemNumber}">#${itemNumber} Item Name</label>
+                    <label for="article-${itemNumber}">#${itemNumber} Description</label>
                     <input required name="article" type="text" class="form-control" id="article-${itemNumber}">
                 </div>
                 <div class="form-group col-md-2">
@@ -148,9 +150,16 @@ function updateTotal() {
         total += totalLine;
     });
     $('#total').val(total);
+    
+    // If there's only one item, update the total directly
+    if ($(".total-a").length === 1) {
+        total = parseFloat($(".total-a").val()) || 0;
+        $('#total').val(total);
+    }
 }
 
+
+// search in customer name
+
 </script>
-
-
 {% endblock content %}

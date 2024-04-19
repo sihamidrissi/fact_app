@@ -21,30 +21,30 @@
     <form method="post" action="/signup">
         {% csrf_token %}
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Create A Username (use only letters and numbers)" Required>
+            <label for="username">nom d'utilisateur</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="nom d'utilisateur" Required>
         </div>
         <div class="form-group">
-            <label for="fname">First Name</label>
-            <input type="text" class="form-control" id="fname" name="fname" placeholder="Enter Your First Name" Required>
+            <label for="fname">Prénom</label>
+            <input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" Required>
         </div>
         <div class="form-group">
-            <label for="lname">Last Name</label>
-            <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter Your Last Name" Required>
+            <label for="lname">Nom</label>
+            <input type="text" class="form-control" id="lname" name="lname" placeholder="Nom" Required>
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email Address" Required>
+            <label for="email">Adresse e-mail</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Adresse e-mail" Required>
         </div>
         <div class="form-group">
-            <label for="pass1">Password</label>
-            <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Create Your Password" Required>
+            <label for="pass1">Mot de passe</label>
+            <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Mot de passe" Required>
         </div>
         <div class="form-group">
-            <label for="pass2">Confirm Password</label>
-            <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Confirm Your Password" Required>
+            <label for="pass2">Confirmez le mot de passe</label>
+            <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Confirmez le mot de passe" Required>
         </div>
-        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
     </form>
 </body>
 </html>

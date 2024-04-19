@@ -35,39 +35,16 @@ from django.contrib.auth import update_session_auth_hash
 from io import BytesIO
     
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 class HomeView(LoginRequiredMixin, View):
     """Main view"""
     login_url = '/access/'
     templates_name = 'index.html'
-    invoices = Invoice.objects.select_related('customer', 'save_by').all().order_by('-invoice_date_time')
-    context = {'invoices': invoices}
-    items_per_page = 10
-
-    @classmethod
-    def index(cls, request):
-        # Check if the user is logged in
-        if request.user.is_authenticated:
-            # If the user is logged in, render the index.html page
-            return render(request, 'index.html')
-        else:
-            # If the user is not logged in, redirect to the login page
-            return redirect('access')
+    context = {}
 
     def get(self, request, *args, **kwargs):
         search_query = request.GET.get('search')
         invoices = Invoice.objects.select_related('customer', 'save_by').order_by('-invoice_date_time')
-
-        paginator = Paginator(invoices, self.items_per_page)  # Show `items_per_page` invoices per page
-        page_number = request.GET.get('page')
-
-        try:
-            invoices = paginator.page(page_number)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            invoices = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            invoices = paginator.page(paginator.num_pages)
 
         if search_query:
             invoices = invoices.filter(
@@ -79,8 +56,9 @@ class HomeView(LoginRequiredMixin, View):
                 Q(invoice_type__icontains=search_query)
             )
 
-        context = {'invoices': invoices, 'search_query': search_query}
-        return render(request, self.templates_name, context)
+        self.context['invoices'] = invoices
+        self.context['search_query'] = search_query
+        return render(request, self.templates_name, self.context)
     def post(self, request, *args, **kwagrs):
 
         # modify an invoice
@@ -171,6 +149,9 @@ class AddInvoiceView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         customers = Customer.objects.select_related('save_by').all()
         context = {'customers': customers}
+
+        initial_total = Decimal(0)
+        context['initial_total'] = initial_total
         return render(request, self.template_name, context)
 
     @transaction.atomic
@@ -190,7 +171,9 @@ class AddInvoiceView(LoginRequiredMixin, View):
 
             
             # Calculate total invoice amount
-            total_invoice_amount = sum(Decimal(total) for total in total_a)
+           # total_invoice_amount = sum(Decimal(total) for total in total_a)
+            total_invoice_amount= Decimal(0)
+            
 
             # Create the invoice object
             invoice = Invoice.objects.create(
@@ -219,6 +202,9 @@ class AddInvoiceView(LoginRequiredMixin, View):
                     total=total_value,
                 )
                 data.save()
+             
+            invoice.total = total_invoice_amount
+            invoice.save()
 
             messages.success(request, "Data saved successfully.")
 
@@ -294,25 +280,25 @@ def signup(request):
         pass2 = request.POST['pass2']
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists! Please try another username.")
+            messages.error(request, "Ce nom d'utilisateur existe déjà! Veuillez essayer un autre nom d'utilisateur.")
             return redirect('access')
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists! Please try another email.")
+            messages.error(request, "L'email existe déjà! Veuillez essayer un autre e-mail.")
             return redirect('access')
 
         if len(username) > 10:
-            messages.error(request, "Username must be under 10 characters.")
+            messages.error(request, "Le nom d'utilisateur doit comporter moins de 10 caractères.")
 
         if pass1 != pass2:
-            messages.error(request, "Passwords didn't match!")
+            messages.error(request, "Les mots de passe ne correspondent pas!")
 
         myuser = User.objects.create_user(username, email, pass1)
         myuser.first_name = fname
         myuser.last_name = lname
         myuser
         myuser.save()
-        messages.success(request, "Your account has been successfully created. We have sent you a confirmation email.")
+        messages.success(request, "Votre compte à été créé avec succès. Nous vous avons envoyé un e-mail de confirmation.")
 
         # Welcome email
         subject = "Welcome to BRUMARTEX invoice system"
@@ -339,14 +325,14 @@ def signin(request):
             login(request, user)
             return redirect('index')
         else:
-           messages.error(request, "Error: This username/password is unrecognized .")
+           messages.error(request, "Erreur: Ce nom d'utilisateur/mot de passe n'est pas reconnu.")
            return render(request, "authentication/access.html")
 
-    return render(request, "authentication/access.html", context_instance=RequestContext(request))
+    return render(request, "authentication/access.html")
 
 def signout(request):
     logout(request)
-    messages.success(request, "Logged out successfully!")
+    messages.success(request, "Déconnexion réussie!")
     return redirect('index')
 
 @login_required
@@ -358,7 +344,7 @@ def change_password(request):
             user = form.save()
             # Updating the session with the new password hash to keep the user logged in
             update_session_auth_hash(request, user)
-            messages.success(request, 'Your password was successfully updated!')
+            messages.success(request, 'Votre mot de passe a été mis à jour avec succès!')
             return redirect('change_password')  # Redirect to the same page after successful password change
         else:
             # Display form errors
@@ -429,3 +415,5 @@ def generate_pdf(request, invoice_number):
     response.write(buffer.getvalue())
     buffer.close()
     return response
+
+

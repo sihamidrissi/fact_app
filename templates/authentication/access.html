@@ -99,14 +99,14 @@
             {% csrf_token %}
             <div class="input-group">
                 <i class="fas fa-user"></i>
-                <input id="username" type="text" name="username" placeholder="Username" required>
+                <input id="username" type="text" name="username" placeholder="Nom d'utilisateur" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input id="password" type="password" name="password" placeholder="Password" required>
+                <input id="password" type="password" name="password" placeholder="Mot de passe" required>
             </div>
-            <button type="submit">Sign In</button>
-            <p>Don't have an account yet? <a href="#" id="signup-link">Sign Up</a></p>
+            <button type="submit">Se connecter</button>
+            <p>Vous n'avez pas encore de compte? <a href="#" id="signup-link">S'inscrires</a></p>
         </form>
 
         <!-- Sign-up form (initially hidden) -->
@@ -115,30 +115,30 @@
             <h3>Create your account!</h3>
             <div class="input-group">
                 <i class="fas fa-user"></i>
-                <input type="text" id="signup-username" name="username" placeholder="Create A Username" required>
+                <input type="text" id="signup-username" name="username" placeholder="Nom d'utilisateur" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-user"></i>
-                <input type="text" id="signup-fname" name="fname" placeholder="Enter Your First Name" required>
+                <input type="text" id="signup-fname" name="fname" placeholder="Prénom" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-user"></i>
-                <input type="text" id="signup-lname" name="lname" placeholder="Enter Your Last Name" required>
+                <input type="text" id="signup-lname" name="lname" placeholder="Nom" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-envelope"></i>
-                <input type="email" id="signup-email" name="email" placeholder="Enter Your Email Address" required>
+                <input type="email" id="signup-email" name="email" placeholder="Email" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="signup-pass1" name="pass1" placeholder="Create Your Password" required>
+                <input type="password" id="signup-pass1" name="pass1" placeholder="Mot de passe" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="signup-pass2" name="pass2" placeholder="Confirm Your Password" required>
+                <input type="password" id="signup-pass2" name="pass2" placeholder="Confirmer le mot de passe" required>
             </div>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-            <p>Already have an account? <a href="#" id="signin-link">Sign In</a></p>
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+            <p>Vous avez déjà un compte? <a href="#" id="signin-link">Se connecter</a></p>
         </form>
     </div>
 

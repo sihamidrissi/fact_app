@@ -2,135 +2,271 @@
 {% load static %}
 
 {% block content %}
-
+<!-- CSS styles -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
 <style>
+    /* Typography */
+    body {
+        font-family: 'Arial', sans-serif;
+        color: #333; /* Darker text color */
+        background-color: #f9f9f9; /* Light background */
+    }
+    h4 {
+        font-family: 'Arial', sans-serif;
+        color: #0b519c; /* Blue header */
+    }
+
+    /* Invoice Container */
+    .invoice-container {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fff; /* White background */
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-top: 20px;
+    }
+
+    /* Header */
+    .invoice-header {
+        background-color: #fff; /* White background */
+        color: #0b519c; /* Blue header */
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    /* Logo */
+    .invoice-logo {
+        width: 100px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    /* Company Info */
+    .company-info {
+        margin-bottom: 20px;
+    }
+
+    /* Invoice Details */
+    .invoice-details {
+        margin-bottom: 30px;
+        background-color: #fff; /* White background */
+        color: #fdfafa; /* Darker text color */
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    /* Table */
+    .table-bordered {
+        border: 1px solid #ddd; /* Lighter border */
+        background-color: #fff; /* White background */
+        color : #333;
+    }
+
+    .table-bordered thead th {
+        border: 1px solid #ddd; /* Lighter border */
+        background-color: #f2f2f2;
+        color : #333;
+    }
+
+    .table-bordered tbody td {
+        border: 1px solid #ddd; /* Lighter border */
+        color : #333;
+    }
+
+    /* Footer */
+    .invoice-footer {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        border-top: 1px solid #ddd; /* Lighter border */
+    }
+
+    /* Print Button */
+    .print-btn {
+        margin-top: 20px;
+    }
+
+    .print-btn button {
+        background-color: #0b519c; /* Blue button */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .print-btn button:hover {
+        background-color: #0a427a; /* Darker blue on hover */
+    }
+
+    /* Responsive Table */
+    .table th,
+    .table td {
+        vertical-align: middle;
+    }
+
+    .table th {
+        font-weight: bold;
+    }
+
+    .table th.bg-light,
+    .table td.bg-light {
+        background-color: #f2f2f2;
+        color: #333;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .small-table {
+        width: 50%;
+        font-size: 0.8rem;
+        background-color: #fff;
+    }
+
+    .small-table th,
+    .small-table td {
+        padding: 0.5rem;
+    }
+
+    /* Responsive Layout */
     @media print {
-        .no-print {
-            display: none !important;
-        }
-        .invoice-container {
-            border: 1px solid #ccc;
-            padding: 20px;
-        }
-        .invoice-header h4 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .invoice-header .btn {
+        .print-btn,
+        .copyright {
             display: none;
-        }
-        .invoice-body,
-        .invoice-footer {
-            padding: 20px 0;
-        }
-        .invoice-body table {
-            font-size: 16px;
         }
     }
 </style>
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card">
-                <div class="card-body p-0">
-                    <div class="invoice-container">
-                        <div class="invoice-header p-4 bg-primary text-white">
-                            <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <h4 class="mb-0">Invoice</h4>
-                                </div>
-                                <div class="col-md-6 text-right no-print">
-                                    <button class="btn btn-light" onclick="window.print()">
-                                        <i class="fas fa-print"></i> Print
-                                    </button>
-                                </div>
-                            </div>
+        <div class="col-lg-8">
+            <div class="invoice-container">
+                <div class="invoice-header">
+                   <h4 style="color: #0b519c;">Facture #{{ obj.invoice_number }}</h4>
+
+                </div>
+
+                <div class="company-info text-center mb-4">
+                    <img src="{% static 'images/logo2.jpg' %}" alt="BRUMARTEX" class="invoice-logo">
+                    <h2>BRUMARTEX SARL AU</h2>
+                    <p>IMPORT-EXPORT | SECOND HAND CLOTHES | FRIPERIE</p>
+                </div>
+
+                <div class="invoice-details mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>Zone franche ilot N116 module N10, Tanger 90090, Maroc</p>
+                            <p>Email: brumartex.logistique@gmail.com</p>
                         </div>
-    
-                        <div class="invoice-body p-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-4">
-                                        <img src="{% static 'images/logo.jpg' %}" alt="BRUMARTEX" class="invoice-logo">
-                                        <address class="mt-2">
-                                            Zone franche ilot N116 module N10<br>
-                                            Tanger 90090, Maroc
-                                        </address>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <address class="mb-4">
-                                        <strong>{{ obj.customer.name }}</strong><br>
-                                        {{ obj.customer.address }}, {{ obj.customer.city }}, Morocco
-                                    </address>
-                                    <div>
-                                        <span class="font-weight-bold">Invoice Type:</span> {{ obj.get_invoice_type_display }}<br>
-                                        <span class="font-weight-bold">Invoice Date:</span> {{ obj.invoice_date_time }}
-                                    </div>
-                                </div>
-                            </div>
-    
-                            <div class="table-responsive mt-4">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Description</th>
-                                            <th>Product ID</th>
-                                            <th>Nbr GB</th>
-                                            <th>Poids/Kg</th>
-                                            <th>Prix U</th>
-                                            <th>Montant Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for article in articles %}
-                                        <tr>
-                                            <td>{{ article.name }}</td>
-                                            <td>{{ article.id }}</td>
-                                            <td>{{article.nbre_GB}}</td>
-                                            <td>{{ article.quantity }}</td>
-                                            <td>{{ article.unit_price }}€</td>
-                                            <td>{{ article.get_total }}€</td>
-                                        </tr>
-                                        {% endfor %}
-                                       
-                                        <tr>
-                                            <td colspan="5" class="text-right">Total</td>
-                                            <td>{{ obj.get_total  }}€ </td>
-                                        </tr>
-                                       
-                                    </tbody>
-                                </table>
-                            </div>
-    
-                            <div class="row justify-content-end mt-4">
-                                <div class="col-md-4">
-                                    <div class="text-right">
-                                        PAID: 
-                                        {% if obj.paid %}
-                                            <i class="fas fa-check text-success"></i>
-                                        {% else %}
-                                            <i class="fas fa-times text-danger"></i>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="invoice-footer p-4 bg-light">
-                            <p class="mb-0">RC:91091-TP:52900494-IF:26110455-ICE:002081133000054-CNSS:1099247 
-                                ATTIJARI INTERNATIONAL BANK. RIB605.640.00001.00000002971.46
-                                       CODE SWIFT AIBSMAMT </p>
+                        <div class="col-md-6">
+                            <p><strong></strong> {{ obj.customer.name }}</p>
+                            <p><strong></strong> {{ obj.customer.address }}, {{ obj.customer.city }}</p>
                         </div>
                     </div>
+                </div>
+
+                
+<div class="invoice-details mb-4">
+    <div class="table-responsive">
+        <table class="table table-bordered small-table">
+            <thead>
+                <tr>
+                    <th>Type de facture</th>
+                    <th>Date</th>
+                    {% if obj.remorque_number %}
+                        <th>Remorque N°</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ obj.get_invoice_type_display }}</td>
+                    <td>{{ obj.invoice_date_time|date:"d-m-Y" }}</td>
+                    {% if obj.remorque_number %}
+                        <td>{{ obj.remorque_number }}</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="table-responsive mt-4">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                {% if articles.0.order_number %}
+                    <th>Colis</th>
+                {% endif %}
+                <th>Description</th>
+                <th>Product ID</th>
+                <th>Nbr GB</th>
+                <th>Poids/Kg</th>
+                <th>Prix U</th>
+                <th>Montant Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+                {% if article.order_number %}
+                    <tr>
+                        {% if articles.0.order_number %}
+                            <td>{{ article.order_number }}</td>
+                        {% endif %}
+                        <td>{{ article.name }}</td>
+                        <td>{{ article.id }}</td>
+                        <td>{{ article.nbre_GB }}</td>
+                        <td>{{ article.quantity }}</td>
+                        <td>{{ article.unit_price }}€</td>
+                        <td>{{ article.get_total }}€</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            <tr>
+                {% if articles.0.order_number %}
+                    <td colspan="6" class="text-end"><strong>Total</strong></td>
+                {% else %}
+                    <td colspan="5" class="text-end"><strong>Total</strong></td>
+                {% endif %}
+                <td>{{ obj.get_total }}€</td>
+            </tr>
+        </tbody>
+        
+        
+        
+        
+    </table>
+</div>
+
+
+
+                <div class="row justify-content-end mt-4">
+                    <div class="col-md-4">
+                        <div class="text-end">
+                            <strong>Statut de paiement:</strong> {% if obj.paid %}<span class="text-success">Payé</span>{% else %}<span class="text-danger">Non payé</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="invoice-footer">
+                    <p>RC:91091-TP:52900494-IF:26110455-ICE:002081133000054-CNSS:1099247 ATTIJARI INTERNATIONAL BANK. RIB 605.640.00001.00000002971.46 <br> CODE SWIFT AIBSMAMT</p>
+                </div>
+
+                <div class="print-btn text-center">
+                    <button class="btn btn-light" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print Invoice
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock content %}
