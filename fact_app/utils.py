@@ -3,24 +3,16 @@ from .models import *
 
 
 
+from django.core.paginator import Paginator
+
 def pagination(request, invoices):
-    default_page=1
-    page = request.GET.get('page', default_page)
+    page_number = request.GET.get('page')
+    if page_number == 'all':
+        return invoices
+    paginator = Paginator(invoices, 10)  # Assuming 10 items per page
+    page_obj = paginator.get_page(page_number)
+    return page_obj
 
-        # paginate items
-    items_per_page=3
-    paginator=Paginator(invoices, items_per_page)
-
-    try:
-            items_page= paginator.page(page)
-
-    except PageNotAnInteger:
-            items_page=paginator.page(default_page)
-
-    except EmptyPage:
-            items_page=paginator.page(paginator.num_pages)
-        
-    return items_page
 
 
 def get_invoice(pk):

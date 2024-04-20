@@ -11,14 +11,14 @@
 
         <div class="form-group">
             <label for="customer">Client</label>
-            <select name="customer" class="form-control" id="customer">
+            <select name="customer" class="form-control selectpicker" id="customer" data-live-search="true" title="Choisissez le client..." required>
                 <option selected disabled>Choisissez le client...</option>
                 {% for customer in customers %}
-                    <option value="{{customer.id}}">{{forloop.counter}}-{{customer.name}}</option>
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
                 {% endfor %}
             </select>
+            
         </div>
-
         <div class="form-group">
             <label for="invoice">Type de facture</label>
             <select name="invoice_type" class="form-control" id="invoice">
@@ -69,13 +69,26 @@
             </div>
         </div>
 
-       
+       <!-- Add these fields before the final total -->
+<div class="form-group">
+    <label>Total Nbre GB</label>
+    <input type="text" class="form-control" id="total-nbre-gb" readonly>
+</div>
+<div class="form-group">
+    <label>Total Poid/Kg</label>
+    <input type="text" class="form-control" id="total-poid-kg" readonly>
+</div>
+
 
         <div class="form-group">
             <label for="total">Total</label>
             <input required name="total" type="number" min="1" step="0.1" readonly class="form-control" id="total">
         </div>
 
+
+
+
+        
         <button type="submit" class="btn btn-primary">Enregistrer</button>
     </form>
 
@@ -122,6 +135,7 @@
                 
         $("#wrapper").append(formAdd);
         updateTotal(); // Update total
+        
     });
 
     // Remove last item line
@@ -143,23 +157,50 @@ function handleChangeSingleArticle(id) {
 }
 
 // Update total value
+// Update total value and other totals
 function updateTotal() {
     let total = 0;
-    $(".total-a").each(function() {
-        let totalLine = parseFloat($(this).val()) || 0;
+    let totalNbreGB = 0;
+    let totalPoidKg = 0;
+
+    // Calculate totals for all items
+    $(".form-row").each(function() {
+        let totalLine = 0;
+        let nbreGB = 0;
+        let qty = 0;
+        let unitPrice = 0;
+
+        $(this).find('input').each(function() {
+            let value = parseFloat($(this).val()) || 0;
+            if ($(this).attr('name') === 'total-a') {
+                totalLine = value;
+            } else if ($(this).attr('name') === 'nbre_GB') {
+                nbreGB = value;
+            } else if ($(this).attr('name') === 'qty') {
+                qty = value;
+            } else if ($(this).attr('name') === 'unit') {
+                unitPrice = value;
+            }
+        });
+
         total += totalLine;
+        totalNbreGB += nbreGB;
+        totalPoidKg += qty;
     });
+
     $('#total').val(total);
-    
-    // If there's only one item, update the total directly
-    if ($(".total-a").length === 1) {
-        total = parseFloat($(".total-a").val()) || 0;
-        $('#total').val(total);
-    }
+    $('#total-nbre-gb').val(totalNbreGB.toFixed(2)); // Display total Nbre GB
+    $('#total-poid-kg').val(totalPoidKg.toFixed(2)); // Display total Poid/Kg
 }
+
 
 
 // search in customer name
 
 </script>
+<script>
+    $(document).ready(function () {
+        $('#customer').selectpicker();
+    });
+    </script>
 {% endblock content %}

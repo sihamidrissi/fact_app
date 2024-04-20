@@ -68,9 +68,13 @@
 
 <!-- Pagination -->
 <div class="pagination justify-content-center">
-    {% if invoices.has_other_pages %}
     <nav aria-label="Page navigation">
         <ul class="pagination">
+            <!-- Add the "Toute" button -->
+            <li class="page-item">
+                <a class="page-link" href="?page=all">Toute</a>
+            </li>
+            {% if invoices.has_other_pages %}
             {% if invoices.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ invoices.previous_page_number }}" aria-label="Previous">
@@ -90,69 +94,75 @@
                 </a>
             </li>
             {% endif %}
+            {% endif %}
         </ul>
     </nav>
-    {% endif %}
 </div>
 <!-- End Pagination -->
 
+
 <!-- Modal modifier -->
-<div class="modal fade" id="modifier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-dark text-center" id="exampleModalLabel">Modification</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div class="modal fade" id="modifier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+   aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title text-dark text-center" id="exampleModalLabel">Modification</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <form method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+
+               <input name="id_modified" type="hidden" id="id_modified">
+
+               <label id="label_id" class="text-dark checkbox-inline"> <strong id="strong_id"> This bill has been paid?</strong></label>
+
+               <input type="radio" id="html" name="modified" value="True">
+               <label class="text-white bg-primary" for="html">Yes</label>
+
+               <input type="radio" id="css" name="modified" value="False">
+               <label class="text-white bg-danger" for="css">No</label><br>
+
             </div>
-            <form method="post">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <input name="id_modified" type="hidden" id="id_modified">
-                    <label id="label_id" class="text-dark checkbox-inline">
-                        <strong id="strong_id">Cette facture a-t-elle été payée ?</strong>
-                    </label>
-                    <input type="radio" id="html" name="modified" value="True">
-                    <label class="text-white bg-primary" for="html">Oui</label>
-                    <input type="radio" id="css" name="modified" value="False">
-                    <label class="text-white bg-danger" for="css">Non</label><br>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                </div>
-            </form>
-        </div>
-    </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+               <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 <!-- end modal-->
 
 <!-- Modal suppression -->
-<div class="modal fade" id="supprimer" tabindex="-1" role="dialog" aria-labelledby="sexampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-dark" id="sexampleModalLabel">Supprimer la facture</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <input name="id_supprimer" type="hidden" id="id_supprimer">
-                    <label id="label_id_s" class="text-dark checkbox-inline">
-                        <strong id="strong_id_s">Êtes-vous sûr de vouloir supprimer la facture ?</strong>
-                    </label>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="modal fade" id="supprimer" tabindex="-1" role="dialog" aria-labelledby="sexampleModalLabel"
+   aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title text-dark" id="sexampleModalLabel">Delete Invoice</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <form method="post">
+               {% csrf_token %}
+               <input name="id_supprimer" type="hidden" id="id_supprimer">
+               <label id="label_id_s" class="text-dark checkbox-inline"> <strong id="strong_id_s">Are you sure you want to delete the invoice  ?</strong></label>
+
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-danger">Delete</button>
+               </div>
+            </form>
+         </div>
+
+      </div>
+   </div>
 </div>
 <!-- end modal-->
 

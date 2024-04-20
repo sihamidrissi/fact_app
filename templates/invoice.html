@@ -201,11 +201,13 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                {% if articles.0.order_number %}
+                {% if article.order_number %}
                     <th>Colis</th>
                 {% endif %}
+                    
+                
                 <th>Description</th>
-                <th>Product ID</th>
+                
                 <th>Nbr GB</th>
                 <th>Poids/Kg</th>
                 <th>Prix U</th>
@@ -214,26 +216,29 @@
         </thead>
         <tbody>
             {% for article in articles %}
-                {% if article.order_number %}
-                    <tr>
-                        {% if articles.0.order_number %}
-                            <td>{{ article.order_number }}</td>
-                        {% endif %}
+            {% if article.order_number %}
+                <p>Order Number: {{ article.order_number }}</p>
+            {% endif %}
+       
+                        
                         <td>{{ article.name }}</td>
-                        <td>{{ article.id }}</td>
+                       
                         <td>{{ article.nbre_GB }}</td>
                         <td>{{ article.quantity }}</td>
                         <td>{{ article.unit_price }}€</td>
                         <td>{{ article.get_total }}€</td>
                     </tr>
-                {% endif %}
+              
             {% endfor %}
             <tr>
-                {% if articles.0.order_number %}
-                    <td colspan="6" class="text-end"><strong>Total</strong></td>
+                {% if article.order_number %}
+                <td colspan="6" class="text-end"><strong>Total</strong></td>
                 {% else %}
-                    <td colspan="5" class="text-end"><strong>Total</strong></td>
-                {% endif %}
+                <td colspan="5" class="text-end"><strong>Total</strong></td>
+
+            {% endif %}
+                   
+               
                 <td>{{ obj.get_total }}€</td>
             </tr>
         </tbody>

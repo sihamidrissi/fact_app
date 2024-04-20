@@ -36,29 +36,26 @@ from io import BytesIO
     
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-class HomeView(LoginRequiredMixin, View):
-    """Main view"""
-    login_url = '/access/'
+class HomeView( View):
+    """ Main view """
+
     templates_name = 'index.html'
-    context = {}
 
-    def get(self, request, *args, **kwargs):
-        search_query = request.GET.get('search')
-        invoices = Invoice.objects.select_related('customer', 'save_by').order_by('-invoice_date_time')
+    invoices = Invoice.objects.select_related('customer', 'save_by').all().order_by('-invoice_date_time')
 
-        if search_query:
-            invoices = invoices.filter(
-                Q(pk__icontains=search_query) |
-                Q(customer__name__icontains=search_query) |
-                Q(invoice_date_time__icontains=search_query) |
-                Q(total__icontains=search_query) |
-                Q(paid__icontains=search_query) |
-                Q(invoice_type__icontains=search_query)
-            )
+    context = {
+        'invoices': invoices
+    }
 
-        self.context['invoices'] = invoices
-        self.context['search_query'] = search_query
+    def get(self, request, *args, **kwags):
+
+        items = pagination(request, self.invoices)
+
+        self.context['invoices'] = items
+
         return render(request, self.templates_name, self.context)
+
+
     def post(self, request, *args, **kwagrs):
 
         # modify an invoice
@@ -81,11 +78,11 @@ class HomeView(LoginRequiredMixin, View):
 
                 obj.save() 
 
-                messages.success(request,  ("Change made successfully.")) 
+                messages.success(request,  ("Modification effectuée avec succès.")) 
 
             except Exception as e:   
 
-                messages.error(request, f"Sorry, the following error has occured {e}.")      
+                messages.error(request, f"Désolé, l'erreur suivante s'est produite {e}.")      
 
         # deleting an invoice    
 
@@ -97,18 +94,16 @@ class HomeView(LoginRequiredMixin, View):
 
                 obj.delete()
 
-                messages.success(request, ("The deletion was successful."))   
-
+                messages.success(request, ("La suppression a réussi."))   
             except Exception as e:
 
-                messages.error(request, f"Sorry, the following error has occured {e}.")      
+                messages.error(request, f"Désolé, l'erreur suivante s'est produite {e}.")      
 
         items = pagination(request, self.invoices)
 
         self.context['invoices'] = items
 
-        return render(request, self.templates_name, self.context)  
-
+        return render(request, self.templates_name, self.context)    
 class AddCustomerView(LoginRequiredMixin, View):
     """Add new customer view"""
 
@@ -133,11 +128,11 @@ class AddCustomerView(LoginRequiredMixin, View):
             created = Customer.objects.create(**data)
 
             if created:
-                messages.success(request, "Customer registered successfully.")
+                messages.success(request, "Client enregistré avec succès.")
             else:
-                messages.error(request, "Sorry, please try again. The data sent is corrupt.")
+                messages.error(request, "Désolé, veuillez réessayer. Les données envoyées sont corrompues.")
         except Exception as e:
-            messages.error(request, f"Sorry, our system detected the following issues: {e}.")
+            messages.error(request, f"Désolé, notre système a détecté les problèmes suivants: {e}.")
 
         return render(request, self.template_name)
 
@@ -206,10 +201,10 @@ class AddInvoiceView(LoginRequiredMixin, View):
             invoice.total = total_invoice_amount
             invoice.save()
 
-            messages.success(request, "Data saved successfully.")
+            messages.success(request, "Données enregistrées avec succès.")
 
         except Exception as e:
-            messages.error(request, f"Sorry, the following error has occurred: {e}")
+            messages.error(request, f"Désolé, l'erreur suivante s'est produite: {e}")
 
         customers = Customer.objects.select_related('save_by').all()
         context = {'customers': customers}
@@ -254,7 +249,7 @@ def access(request):
                 login(request, user)
                 return redirect('index')
             else:
-                error_message = "Error: Invalid username or password."
+                error_message = "Erreur! Identifiant ou mot de passe invalide."
                 return render(request, 'authentication/access.html', {'error_message': error_message})
         elif 'signup' in request.POST:
             form = UserCreationForm(request.POST)
@@ -266,7 +261,7 @@ def access(request):
                 login(request, user)
                 return redirect('index')
             else:
-                error_message = "Error: Please correct the errors in the form."
+                error_message = "Erreur : Veuillez corriger les erreurs dans le formulaire."
                 return render(request, 'authentication/access.html', {'error_message': error_message})
     return render(request, 'authentication/access.html')
 
