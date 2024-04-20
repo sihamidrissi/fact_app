@@ -118,18 +118,18 @@
 
                <input name="id_modified" type="hidden" id="id_modified">
 
-               <label id="label_id" class="text-dark checkbox-inline"> <strong id="strong_id"> This bill has been paid?</strong></label>
+               <label id="label_id" class="text-dark checkbox-inline"> <strong id="strong_id"> Cette facture a été payée ?</strong></label>
 
                <input type="radio" id="html" name="modified" value="True">
-               <label class="text-white bg-primary" for="html">Yes</label>
+               <label class="text-white bg-primary" for="html">Oui</label>
 
                <input type="radio" id="css" name="modified" value="False">
-               <label class="text-white bg-danger" for="css">No</label><br>
+               <label class="text-white bg-danger" for="css">Non</label><br>
 
             </div>
             <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-               <button type="submit" class="btn btn-primary">Save</button>
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+               <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>
          </form>
       </div>
@@ -143,7 +143,7 @@
    <div class="modal-dialog" role="document">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title text-dark" id="sexampleModalLabel">Delete Invoice</h5>
+            <h5 class="modal-title text-dark" id="sexampleModalLabel">Supprimer la facture</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
             </button>
@@ -152,11 +152,11 @@
             <form method="post">
                {% csrf_token %}
                <input name="id_supprimer" type="hidden" id="id_supprimer">
-               <label id="label_id_s" class="text-dark checkbox-inline"> <strong id="strong_id_s">Are you sure you want to delete the invoice  ?</strong></label>
+               <label id="label_id_s" class="text-dark checkbox-inline"> <strong id="strong_id_s">Etes-vous sûr de vouloir supprimer la facture ?</strong></label>
 
                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="submit" class="btn btn-danger">Supprimer</button>
                </div>
             </form>
          </div>
