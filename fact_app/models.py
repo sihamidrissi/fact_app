@@ -77,6 +77,8 @@ class Invoice(models.Model):
 
     remorque_number=models.CharField(default='',max_length=1000)
 
+    total_nbre_gb = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_poid_kg = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     class Meta:
         verbose_name = "Invoice"
@@ -90,6 +92,16 @@ class Invoice(models.Model):
         articles = self.article_set.all()   
         total = sum(article.total for article in self.article_set.all())
         return total 
+    
+   
+    
+    def get_total_nbre_gb(self):
+        total_nbre_gb = self.total_nbre_gb
+        return total_nbre_gb
+
+    def get_total_weight(self):
+        total_weight = self.total_poid_kg
+        return total_weight
 
 
 class Article(models.Model):

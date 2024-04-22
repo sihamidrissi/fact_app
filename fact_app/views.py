@@ -145,69 +145,77 @@ class AddInvoiceView(LoginRequiredMixin, View):
         customers = Customer.objects.select_related('save_by').all()
         context = {'customers': customers}
 
-        initial_total = Decimal(0)
-        context['initial_total'] = initial_total
         return render(request, self.template_name, context)
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
         try:
-          with transaction.atomic():
-            customer_id = request.POST.get('customer')
-            invoice_type = request.POST.get('invoice_type')
-            articles = request.POST.getlist('article')
-            qties = request.POST.getlist('qty')
-            units = request.POST.getlist('unit')
-            total_a = request.POST.getlist('total-a')
-            nbre_GB = request.POST.get('nbre_GB')
-            invoice_number = request.POST.get('invoice_number')
-            order_number= request.POST.get('order_number')
-            remorque_number= request.POST.get('remorque_number')
+            with transaction.atomic():
+                customer_id = request.POST.get('customer')
+                invoice_type = request.POST.get('invoice_type')
+                articles = request.POST.getlist('article')
+                qties = request.POST.getlist('qty')
+                units = request.POST.getlist('unit')
+                total_a = request.POST.getlist('total-a')
+                nbre_GB = request.POST.get('nbre_GB')
+                invoice_number = request.POST.get('invoice_number')
+                order_number = request.POST.get('order_number')
+                remorque_number = request.POST.get('remorque_number')
 
-            
-            # Calculate total invoice amount
-           # total_invoice_amount = sum(Decimal(total) for total in total_a)
-            total_invoice_amount= Decimal(0)
-            
 
-            # Create the invoice object
-            invoice = Invoice.objects.create(
-                customer_id=customer_id,
-                save_by=request.user,
-                total=total_invoice_amount,
-                invoice_type=invoice_type,
-                invoice_number=invoice_number,
-                order_number= order_number,
-                remorque_number= remorque_number
-            )
+                # Initialize total invoice amount, total GB, and total weight
+                total_invoice_amount = Decimal(0)
+                total_GB = sum(int(nbre_GB) for nbre_GB in request.POST.getlist('nbre_GB'))
+                total_weight = sum(int(qty) for qty in request.POST.getlist('qty'))
+                
 
-            # Create article objects
-            for index, article in enumerate(articles):
-                nbre_GB_value = nbre_GB if nbre_GB else 0
-                qty_value = qties[index] if index < len(qties) else 0
-                unit_value = units[index] if index < len(units) else 0
-                total_value = total_a[index] if index < len(total_a) else 0
-              
-                data = Article(
-                    invoice=invoice,
-                    name=article,
-                    nbre_GB=nbre_GB_value,
-                    quantity=qty_value,
-                    unit_price=unit_value,
-                    total=total_value,
+                # Create the invoice object
+                invoice = Invoice.objects.create(
+                    customer_id=customer_id,
+                    save_by=request.user,
+                    total=total_invoice_amount,  # Initialize with 0
+                    invoice_type=invoice_type,
+                    invoice_number=invoice_number,
+                    order_number=order_number,
+                    remorque_number=remorque_number
                 )
-                data.save()
-             
-            invoice.total = total_invoice_amount
-            invoice.save()
 
-            messages.success(request, "Données enregistrées avec succès.")
+                # Create article objects and calculate totals
+                for index, article in enumerate(articles):
+                    nbre_GB_value = nbre_GB if nbre_GB else 0
+                    qty_value = qties[index] if index < len(qties) else 0
+                    unit_value = units[index] if index < len(units) else 0
+                    total_value = total_a[index] if index < len(total_a) else 0
+
+                    data = Article(
+                        invoice=invoice,
+                        name=article,
+                        nbre_GB=nbre_GB_value,
+                        quantity=qty_value,
+                        unit_price=unit_value,
+                        total=total_value,
+                    )
+                    data.save()
+
+                    # Update total invoice amount
+                    total_invoice_amount += Decimal(total_value)
+
+                invoice.total = total_invoice_amount  # Update total amount
+                invoice.save()
+
+                messages.success(request, "Données enregistrées avec succès.")
+                context = {
+                    'customers': customers,
+                    'total_GB': total_GB,
+                    'total_weight': total_weight
+                }
+                return render(request, self.template_name, context)
 
         except Exception as e:
             messages.error(request, f"Désolé, l'erreur suivante s'est produite: {e}")
 
         customers = Customer.objects.select_related('save_by').all()
-        context = {'customers': customers}
+        context = {'customers': customers, 'total_GB': total_GB, 'total_weight': total_weight}
         return render(request, self.template_name, context)
     
 class InvoiceVisualizationView(LoginRequiredMixin, View):
@@ -219,7 +227,7 @@ class InvoiceVisualizationView(LoginRequiredMixin, View):
         pk = kwargs.get('pk')
         context = get_invoice(pk)
         return render(request, self.template_name, context)
-
+  
 @superuser_required
 def get_invoice_pdf(request, *args, **kwargs):
     """Generate PDF file from HTML file"""
