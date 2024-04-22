@@ -202,9 +202,9 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                {% if article.order_number %}
+              
                     <th>Colis</th>
-                {% endif %}
+             
                 <th>Description</th>
                 <th>Nbr GB</th>
                 <th>Poids/Kg</th>
@@ -213,14 +213,12 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Loop through articles to display invoice items -->
+            
             {% for article in articles %}
-            <!-- Display each article -->
-            <tr>
-                <!-- If applicable, display order number -->
-                {% if article.order_number %}
+             <tr>
+                
                 <td>{{ article.order_number }}</td>
-                {% endif %}
+                
                 <!-- Display article details -->
                 <td>{{ article.name }}</td>
                 <td>{{ article.nbre_GB }}</td>
@@ -233,11 +231,10 @@
             <!-- Display totals row -->
             <tr>
                 <!-- If applicable, span the first cell -->
-                {% if article.order_number %}
+              
                 <td colspan="2" class="text-end"><strong>Total</strong></td>
-                {% else %}
-                <td colspan="1" class="text-end"><strong>Total</strong></td>
-                {% endif %}
+             
+              
                 <!-- Display total_nbr_gb and total_weight -->
                 <td>{{ obj.total_nbre_gb }}</td>
                 <td>{{ obj.total_poid_kg }}</td>
