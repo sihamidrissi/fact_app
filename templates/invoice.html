@@ -203,8 +203,8 @@
         <thead>
             <tr>
               
-                    <th>Colis</th>
-             
+               
+                <th>Colis</th> 
                 <th>Description</th>
                 <th>Nbr GB</th>
                 <th>Poids/Kg</th>
@@ -216,10 +216,9 @@
             
             {% for article in articles %}
              <tr>
-                
-                <td>{{ article.order_number }}</td>
-                
-                <!-- Display article details -->
+                <script>console.log("Article: ", article);</script>
+               
+                <td>{{ article.order_number}}</td>
                 <td>{{ article.name }}</td>
                 <td>{{ article.nbre_GB }}</td>
                 <td>{{ article.quantity }}</td>
@@ -230,14 +229,14 @@
             {% endfor %}
             <!-- Display totals row -->
             <tr>
-                <!-- If applicable, span the first cell -->
-              
+               
+               
                 <td colspan="2" class="text-end"><strong>Total</strong></td>
-             
+        
               
                 <!-- Display total_nbr_gb and total_weight -->
                 <td>{{ obj.total_nbre_gb }}</td>
-                <td>{{ obj.total_poid_kg }}</td>
+                <td>{{ obj.total_poid_kg }}Kg</td>
                 <td></td> <!-- Leave empty since it's not applicable for total -->
                 <td>{{ obj.get_total }}€</td>
             </tr>

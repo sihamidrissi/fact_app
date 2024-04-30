@@ -140,11 +140,10 @@ class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""
 
     template_name = 'add_invoice.html'
+    customers = Customer.objects.select_related('save_by').all() 
 
     def get(self, request, *args, **kwargs):
-        customers = Customer.objects.select_related('save_by').all()
-        context = {'customers': customers}
-
+        context = {'customers': self.customers}  # Use self.customers
         return render(request, self.template_name, context)
 
     @transaction.atomic
@@ -157,17 +156,15 @@ class AddInvoiceView(LoginRequiredMixin, View):
                 qties = request.POST.getlist('qty')
                 units = request.POST.getlist('unit')
                 total_a = request.POST.getlist('total-a')
-                nbre_GB = request.POST.get('nbre_GB')
+                nbre_GB = request.POST.getlist('nbre_GB')  # Retrieve total GB values
                 invoice_number = request.POST.get('invoice_number')
-                order_number = request.POST.get('order_number')
+                order_number = request.POST.get('order_number')  # Retrieve order_number
                 remorque_number = request.POST.get('remorque_number')
-
 
                 # Initialize total invoice amount, total GB, and total weight
                 total_invoice_amount = Decimal(0)
-                total_GB = sum(int(nbre_GB) for nbre_GB in request.POST.getlist('nbre_GB'))
-                total_weight = sum(int(qty) for qty in request.POST.getlist('qty'))
-                
+                total_GB = sum(int(nbre_GB) for nbre_GB in nbre_GB)
+                total_weight = sum(int(qty) for qty in qties)
 
                 # Create the invoice object
                 invoice = Invoice.objects.create(
@@ -176,13 +173,15 @@ class AddInvoiceView(LoginRequiredMixin, View):
                     total=total_invoice_amount,  # Initialize with 0
                     invoice_type=invoice_type,
                     invoice_number=invoice_number,
-                    order_number=order_number,
-                    remorque_number=remorque_number
+                    order_number=order_number,  # Pass order_number to the invoice object
+                    remorque_number=remorque_number,
+                    total_nbre_gb=total_GB,  # Assign total GB value to the invoice object
+                    total_poid_kg=total_weight  # Assign total weight value to the invoice object
                 )
 
                 # Create article objects and calculate totals
                 for index, article in enumerate(articles):
-                    nbre_GB_value = nbre_GB if nbre_GB else 0
+                    nbre_GB_value = nbre_GB[index] if index < len(nbre_GB) else 0
                     qty_value = qties[index] if index < len(qties) else 0
                     unit_value = units[index] if index < len(units) else 0
                     total_value = total_a[index] if index < len(total_a) else 0
@@ -194,6 +193,7 @@ class AddInvoiceView(LoginRequiredMixin, View):
                         quantity=qty_value,
                         unit_price=unit_value,
                         total=total_value,
+                        order_number=order_number  # Pass order_number to the article object
                     )
                     data.save()
 
@@ -205,19 +205,21 @@ class AddInvoiceView(LoginRequiredMixin, View):
 
                 messages.success(request, "Données enregistrées avec succès.")
                 context = {
-                    'customers': customers,
+                    'customers': self.customers,  # Use self.customers
                     'total_GB': total_GB,
-                    'total_weight': total_weight
+                    'total_weight': total_weight,
+                    'order_number': order_number  # Pass order_number to the context
                 }
                 return render(request, self.template_name, context)
 
         except Exception as e:
             messages.error(request, f"Désolé, l'erreur suivante s'est produite: {e}")
 
-        customers = Customer.objects.select_related('save_by').all()
-        context = {'customers': customers, 'total_GB': total_GB, 'total_weight': total_weight}
+        context = {'customers': self.customers, 'total_GB': total_GB, 'total_weight': total_weight}  # Use self.customers
         return render(request, self.template_name, context)
-    
+
+
+
 class InvoiceVisualizationView(LoginRequiredMixin, View):
     """View to visualize the invoice"""
 
@@ -390,7 +392,7 @@ def generate_pdf(request, invoice_number):
 
     # Add customer information
     elements.append(Paragraph(f"Customer: {obj.customer.name}", style_normal))
-    elements.append(Paragraph(f"Address: {obj.customer.address}, {obj.customer.city}, Morocco", style_normal))
+    elements.append(Paragraph(f"Address: {obj.customer.address}, {obj.customer.city}", style_normal))
     elements.append(Paragraph("", style_normal))  # Add empty line for spacing
 
     # Create a table for the invoice items
