@@ -202,9 +202,9 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-              
-               
-                <th>Colis</th> 
+                {% if articles.0.order_number %}
+                    <th>Colis</th>
+                {% endif %}
                 <th>Description</th>
                 <th>Nbr GB</th>
                 <th>Poids/Kg</th>
@@ -213,27 +213,21 @@
             </tr>
         </thead>
         <tbody>
-            
             {% for article in articles %}
-             <tr>
-                <script>console.log("Article: ", article);</script>
-               
-                <td>{{ article.order_number}}</td>
-                <td>{{ article.name }}</td>
-                <td>{{ article.nbre_GB }}</td>
-                <td>{{ article.quantity }}</td>
-                <td>{{ article.unit_price }}€</td>
-                <td>{{ article.get_total }}€</td>
-                
-            </tr>
+                <tr>
+                    {% if articles.0.order_number %}
+                        <td>{{ article.order_number }}</td>
+                    {% endif %}
+                    <td>{{ article.name }}</td>
+                    <td>{{ article.nbre_GB }}</td>
+                    <td>{{ article.quantity }}</td>
+                    <td>{{ article.unit_price }}€</td>
+                    <td>{{ article.get_total }}€</td>
+                </tr>
             {% endfor %}
             <!-- Display totals row -->
             <tr>
-               
-               
-                <td colspan="2" class="text-end"><strong>Total</strong></td>
-        
-              
+                <td colspan="{% if articles.0.order_number %}{{ articles|length|add:0 }}{% else %}{{ articles|length }}{% endif %}" class="text-end"><strong>Total</strong></td>
                 <!-- Display total_nbr_gb and total_weight -->
                 <td>{{ obj.total_nbre_gb }}</td>
                 <td>{{ obj.total_poid_kg }}Kg</td>
@@ -241,7 +235,6 @@
                 <td>{{ obj.get_total }}€</td>
             </tr>
         </tbody>
-        
     </table>
 </div>
 
