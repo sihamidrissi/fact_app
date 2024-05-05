@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container my-5">
+    <h1 class="text-capitalize text-center bg-dark text-white p-3">Bon de commande </h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group col-md-2">
+            <label for="commande_number">Numéro de commande</label>
+            <input required name="commande_number" type="text" class="form-control" id="commande_number">
+        </div>
+        <div class="form-group">
+            <label for="customer">Client</label>
+            <select name="customer" class="form-control selectpicker" id="customer" data-live-search="true" title="Choisissez le client..." required>
+                <option selected disabled>Choisissez le client...</option>
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div id="wrapper">
+            <div class="form-row">
+                <div class="form-group col-md-1">
+                    <label for="ref">Référence</label>
+                    <input required name="ref" type="text" class="form-control" id="ref">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="designation-1">Désignation</label>
+                    <input required name="designation" type="text" class="form-control" id="designation-1">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Poids-1">Poids/Kg</label>
+                    <input required name="Poids" type="number" min="1" step="0.1" class="form-control" id="Poids-1">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="quantite-1">Quantité</label>
+                    <input required name="quantite" type="number" min="1" step="1" class="form-control" id="quantite-1">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Prix-1">Prix au Kg HT</label>
+                    <input required name="Prix" type="number" min="1" step="0.01" class="form-control" id="Prix-1" onchange="calculateMontantHT(1)">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Montant_HT-1">Montant HT</label>
+                    <input required name="Montant_HT" type="number" min="1" step="0.01" readonly class="form-control" id="Montant_HT-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Total_HT">Total HT</label>
+            <input required name="Total_HT" type="number" min="1" step="0.01" readonly class="form-control" id="Total_HT">
+        </div>
+
+        <div class="form-group">
+            <label for="Total_TTC">Total TTC</label>
+            <input required name="Total_TTC" type="number" min="1" step="0.01" readonly class="form-control" id="Total_TTC">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <button id="btn-add" class="btn btn-outline-danger w-100">Ajouter une nouvelle ligne</button>
+        </div>
+        <div class="col-md-6">
+            <button id="btn-remove" class="btn btn-outline-warning w-100">Supprimer la dernière ligne</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateMontantHT(itemId) {
+        let poids = parseFloat(document.getElementById(`Poids-${itemId}`).value);
+        let prix = parseFloat(document.getElementById(`Prix-${itemId}`).value);
+        let montantHT = poids * prix;
+        document.getElementById(`Montant_HT-${itemId}`).value = montantHT.toFixed(2);
+        updateTotal();
+    }
+
+    function updateTotal() {
+        let totalHT = 0;
+        let montantInputs = document.querySelectorAll('[id^=Montant_HT-]');
+        montantInputs.forEach(function (input) {
+            totalHT += parseFloat(input.value);
+        });
+        document.getElementById('Total_HT').value = totalHT.toFixed(2);
+        document.getElementById('Total_TTC').value = totalHT.toFixed(2); 
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('Prix-1').addEventListener('change', function () {
+            calculateMontantHT(1);
+        });
+    });
+
+    let itemNumber = 1;
+
+    document.getElementById('btn-add').addEventListener('click', function () {
+        itemNumber++;
+        let formAdd = `
+            <div class="form-row">
+                <div class="form-group col-md-1">
+                    <label for="ref-${itemNumber}">Référence</label>
+                    <input required name="ref" type="text" class="form-control" id="ref-${itemNumber}">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="designation-${itemNumber}">Désignation</label>
+                    <input required name="designation" type="text" class="form-control" id="designation-${itemNumber}">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Poids-${itemNumber}">Poids/Kg</label>
+                    <input required name="Poids" type="number" min="1" step="0.1" class="form-control" id="Poids-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="quantite-${itemNumber}">Quantité</label>
+                    <input required name="quantite" type="number" min="1" step="1" class="form-control" id="quantite-${itemNumber}">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Prix-${itemNumber}">Prix au Kg HT</label>
+                    <input required name="Prix" type="number" min="1" step="0.01" class="form-control" id="Prix-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Montant_HT-${itemNumber}">Montant HT</label>
+                    <input required name="Montant_HT" type="number" min="1" step="0.01" readonly class="form-control" id="Montant_HT-${itemNumber}">
+                </div>
+            </div>`;
+        document.getElementById('wrapper').insertAdjacentHTML('beforeend', formAdd);
+    });
+
+    document.getElementById('btn-remove').addEventListener('click', function () {
+        let lastChild = document.getElementById('wrapper').lastElementChild;
+        if (lastChild.id !== 'wrapper') {
+            lastChild.remove();
+            updateTotal();
+        }
+    });
+</script>
+
+{% endblock content %}

@@ -16,6 +16,8 @@ urlpatterns = [
     path('change_password/', views.change_password, name='change_password'),
     path('generate-pdf/<int:invoice_id>/', views.generate_pdf, name='generate_pdf'),
     path('admin/', admin.site.urls),
+    path('commande/', views.AddCommandeView.as_view(), name='commande'),
+
   
     
 

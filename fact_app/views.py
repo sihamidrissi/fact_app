@@ -136,6 +136,51 @@ class AddCustomerView(LoginRequiredMixin, View):
 
         return render(request, self.template_name)
 
+from django.views.generic import TemplateView
+
+class AddCommandeView(TemplateView):
+     """Add a new commande view"""
+     template_name="commande.html"
+     customers = Customer.objects.select_related('save_by').all()
+
+     def get(self, request, *args, **kwargs):
+         context = {'customers': self.customers}  # Use self.customers
+         return render(request, self.template_name, context)
+        
+
+     def post(self, request, *args, **kwargs):
+        data = {
+            'customer': request.POST.get('customer'),
+            'commande_number': request.POST.get('commande_number'),
+            'ref': request.POST.get('ref'),
+            'designation': request.POST.get('designation'),
+            'Poids': request.POST.get('Poids'),
+            'Qt': request.POST.get('Qt'),
+            'Prix ': request.POST.get('Prix'),
+            'Montant_HT': request.POST.get('Montant_HT'),
+            'Total_HT': request.POST.get('Total_HT'),
+            'Total_TTC': request.POST.get('Total_TTC'),
+            'save_by': request.user
+        }
+
+        try:
+            created = Commande.objects.create(**data)
+
+            if created:
+                messages.success(request, "Le bon de commande est enregistré avec succès.")
+            else:
+                messages.error(request, "Désolé, veuillez réessayer. Les données envoyées sont corrompues.")
+        except Exception as e:
+            messages.error(request, f"Désolé, notre système a détecté les problèmes suivants: {e}.")
+
+        return render(request, self.template_name)
+
+
+
+
+     
+
+
 class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""
 

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator
+from django.db import models
+
 
 
 
@@ -102,6 +104,66 @@ class Invoice(models.Model):
     def get_total_weight(self):
         total_weight = self.total_poid_kg
         return total_weight
+    
+
+class Commande(models.Model):
+     """
+    Name: Commande model definiton
+    Descripiton: 
+    Author: elidrissisiham2@gmail.com
+    """
+     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+     save_by = models.ForeignKey(User, on_delete=models.PROTECT)
+     commande_date_time = models.DateTimeField(auto_now_add=True)
+
+     total = models.DecimalField(max_digits=10000, decimal_places=2)
+
+     last_updated_date = models.DateTimeField(null=True, blank=True)
+     commande_number = models.PositiveIntegerField(
+        unique=True,
+        null=True,
+        blank=True,
+        validators=[MaxValueValidator(999999)] )
+     
+     ref = models.CharField(default='',max_length=200000000)
+     designation = models.CharField(default='',max_length=200000000)
+     Qt = models.IntegerField(default=0)
+     Prix = models.DecimalField(max_digits=100, decimal_places=2, default=0)
+     Montant_HT= models.DecimalField(max_digits=100, decimal_places=2, default=0)
+     Total_HT = models.DecimalField(max_digits=100, decimal_places=2, default=0)
+     Total_TTC= models.DecimalField(max_digits=100, decimal_places=2, default=0)
+     Poids= models.DecimalField(max_digits=100, decimal_places=2, default=0)
+
+     class Meta: 
+        verbose_name = "Commande"
+        verbose_name_plural = "Commandes"
+
+     def __str__(self):
+           return f"{self.customer.name}_{self.commande_date_time}"
+     
+     @property
+     def get_Montant(self):
+        Montant_HT = self.Poids * self.Prix  
+        return Montant_HT
+     
+     @classmethod
+     def get_totalHT(cls):
+        Total_HT = cls.objects.aggregate(total=models.Sum('Montant_HT'))['total'] or 0
+        return Total_HT
+     
+     @classmethod
+     def get_totalTTC(cls):
+        Total_TTC = cls.objects.aggregate(total=models.Sum('Montant_HT'))['total'] or 0
+        return Total_TTC
+     
+     
+
+
+
+
+
+     
+
 
 
 class Article(models.Model):
