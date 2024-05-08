@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- CSS styles -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+    /* Typography */
+    body {
+        font-family: 'Arial', sans-serif;
+        color: #333; /* Darker text color */
+        background-color: #f9f9f9; /* Light background */
+    }
+    h4 {
+        font-family: 'Arial', sans-serif;
+        color: #0b519c; /* Blue header */
+    }
+
+    /* Invoice Container */
+    .invoice-container {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fff; /* White background */
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-top: 20px;
+    }
+
+    /* Header */
+    .invoice-header {
+        background-color: #fff; /* White background */
+        color: #0b519c; /* Blue header */
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    /* Logo */
+    .invoice-logo {
+        width: 100px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    /* Company Info */
+    .company-info {
+        margin-bottom: 20px;
+    }
+
+    /* Invoice Details */
+    .invoice-details {
+        margin-bottom: 30px;
+        background-color: #fff; /* White background */
+        color: #fdfafa; /* Darker text color */
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    /* Table */
+    .table-bordered {
+        border: 1px solid #ddd; /* Lighter border */
+        background-color: #fff; /* White background */
+        color : #333;
+    }
+
+    .table-bordered thead th {
+        border: 1px solid #ddd; /* Lighter border */
+        background-color: #f2f2f2;
+        color : #333;
+    }
+
+    .table-bordered tbody td {
+        border: 1px solid #ddd; /* Lighter border */
+        color : #333;
+    }
+
+    /* Footer */
+    .invoice-footer {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        border-top: 1px solid #ddd; /* Lighter border */
+    }
+
+    /* Print Button */
+    .print-btn {
+        margin-top: 20px;
+    }
+
+    .print-btn button {
+        background-color: #0b519c; /* Blue button */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .print-btn button:hover {
+        background-color: #0a427a; /* Darker blue on hover */
+    }
+
+    /* Responsive Table */
+    .table th,
+    .table td {
+        vertical-align: middle;
+    }
+
+    .table th {
+        font-weight: bold;
+    }
+
+    .table th.bg-light,
+    .table td.bg-light {
+        background-color: #f2f2f2;
+        color: #333;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .small-table {
+        width: 50%;
+        font-size: 0.8rem;
+        background-color: #fff;
+    }
+
+    .small-table th,
+    .small-table td {
+        padding: 0.5rem;
+    }
+
+    /* Responsive Layout */
+    @media print {
+        .print-btn,
+        .copyright {
+            display: none;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="invoice-container">
+                <div class="invoice-header">
+                   <h4 style="color: #0b519c;">Bon de commande N° {{ obj.invoice_number }}</h4>
+
+                </div>
+
+                <div class="company-info text-center mb-4">
+                    <img src="{% static 'images/logo2.jpg' %}" alt="BRUMARTEX" class="invoice-logo">
+                    <h2>BRUMARTEX SARL AU</h2>
+                    <p>IMPORT-EXPORT | SECOND HAND CLOTHES | FRIPERIE</p>
+                </div>
+
+                <div class="invoice-details mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>Zone franche ilot N116 module N10, Tanger 90090, Maroc</p>
+                            <p>Email: brumartex.logistique@gmail.com</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong></strong> {{ obj.customer.name }}</p>
+                            <p><strong></strong> {{ obj.customer.address }}, {{ obj.customer.city }}</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+               
+
+                
+
+                <div class="invoice-footer">
+                    <p>RC:91091-TP:52900494-IF:26110455-ICE:002081133000054-CNSS:1099247 ATTIJARI INTERNATIONAL BANK. RIB 605.640.00001.00000002971.46 <br> CODE SWIFT AIBSMAMT</p>
+                </div>
+
+                <div class="print-btn text-center">
+                    <button class="btn btn-light" onclick="window.print()">
+                        <i class="fas fa-print"></i> Imprimer la facture
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock content %}

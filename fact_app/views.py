@@ -139,47 +139,78 @@ class AddCustomerView(LoginRequiredMixin, View):
 from django.views.generic import TemplateView
 
 class AddCommandeView(TemplateView):
-     """Add a new commande view"""
-     template_name="commande.html"
-     customers = Customer.objects.select_related('save_by').all()
+    """Add a new commande view"""
+    template_name = "commande.html"
 
-     def get(self, request, *args, **kwargs):
-         context = {'customers': self.customers}  # Use self.customers
-         return render(request, self.template_name, context)
+    def get(self, request, *args, **kwargs):
+        customers = Customer.objects.all()
+        context = {'customers': customers}
+        return render(request, self.template_name, context)
         
-
-     def post(self, request, *args, **kwargs):
-        data = {
-            'customer': request.POST.get('customer'),
-            'commande_number': request.POST.get('commande_number'),
-            'ref': request.POST.get('ref'),
-            'designation': request.POST.get('designation'),
-            'Poids': request.POST.get('Poids'),
-            'Qt': request.POST.get('Qt'),
-            'Prix ': request.POST.get('Prix'),
-            'Montant_HT': request.POST.get('Montant_HT'),
-            'Total_HT': request.POST.get('Total_HT'),
-            'Total_TTC': request.POST.get('Total_TTC'),
-            'save_by': request.user
-        }
-
+    def post(self, request, *args, **kwargs):
+        customer_id = request.POST.get('customer')
+        commande_number = request.POST.get('commande_number')
+        ref = request.POST.get('ref')
+        designation = request.POST.get('designation')
+        poids = request.POST.get('Poids')
+        quantite = request.POST.get('quantite')
+        prix = request.POST.get('Prix')
+        montant_ht = request.POST.get('Montant_HT')
+        total_ht = request.POST.get('Total_HT')
+        total_ttc = request.POST.get('Total_TTC')
+        
         try:
-            created = Commande.objects.create(**data)
-
-            if created:
-                messages.success(request, "Le bon de commande est enregistré avec succès.")
-            else:
-                messages.error(request, "Désolé, veuillez réessayer. Les données envoyées sont corrompues.")
+            customer = Customer.objects.get(id=customer_id)
+            save_by = request.user
+            
+            Commande.objects.create(
+                customer=customer,
+                commande_number=commande_number,
+                ref=ref,
+                designation=designation,
+                Poids=poids,
+                Qt=quantite,
+                Prix=prix,
+                Montant_HT=montant_ht,
+                Total_HT=total_ht,
+                Total_TTC=total_ttc,
+                save_by=save_by
+            )
+            messages.success(request, "Le bon de commande a été enregistré avec succès.")
         except Exception as e:
-            messages.error(request, f"Désolé, notre système a détecté les problèmes suivants: {e}.")
-
-        return render(request, self.template_name)
-
-
+            messages.error(request, f"Une erreur s'est produite lors de l'enregistrement du bon de commande: {e}")
+        
+        return redirect('commande')  
 
 
-     
 
+class CommandeListView(TemplateView):
+    """View to display list of submitted commandes."""
+    template_name = 'commande_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        commandes = Commande.objects.all()
+        context['commandes'] = commandes
+        return context    
+
+from django.shortcuts import get_object_or_404
+
+def delete_commande(request, commande_number):
+    commande = get_object_or_404(Commande, commande_number=commande_number)
+    commande.delete()
+    return redirect('commande_list')
+
+
+from django.views.generic import DetailView
+from .models import Commande
+
+
+class CommandeDetailView(DetailView):
+    model = Commande
+    template_name = 'bon_commande.html'  # Replace 'voir_commande.html' with your actual template name
+    context_object_name = 'commande'
+    pk_url_kwarg = 'pk'
 
 class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""

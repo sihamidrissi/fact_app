@@ -17,6 +17,15 @@ urlpatterns = [
     path('generate-pdf/<int:invoice_id>/', views.generate_pdf, name='generate_pdf'),
     path('admin/', admin.site.urls),
     path('commande/', views.AddCommandeView.as_view(), name='commande'),
+    path('commande_list/', views.CommandeListView.as_view(), name='commande_list'),
+    path('bon_commande/<int:pk>/', views.CommandeDetailView.as_view(), name='bon_commande'),
+    
+    path('delete_commande/<int:commande_number>', views.delete_commande, name='delete_commande'),
+
+   
+      
+
+
 
   
     

@@ -14,7 +14,7 @@
         <div class="form-group">
             <label for="customer">Client</label>
             <select name="customer" class="form-control selectpicker" id="customer" data-live-search="true" title="Choisissez le client..." required>
-                <option selected disabled>Choisissez le client...</option>
+                <option selected disabled>Choisissez le fournisseur...</option>
                 {% for customer in customers %}
                     <option value="{{ customer.id }}">{{ customer.name }}</option>
                 {% endfor %}

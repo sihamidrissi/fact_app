@@ -20,3 +20,4 @@ class AdminInvoice(admin.ModelAdmin):
 admin.site.register(Customer, AdminCustomer)
 admin.site.register(Invoice, AdminInvoice)
 admin.site.register(Article)
+admin.site.register(Commande)

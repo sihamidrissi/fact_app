@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% load l10n %} <!-- Load l10n tag to enable date localization -->
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+{% block content %}
+<br><br>
+
+<h2 class="text-center">Liste des bons de commandes</h2>
+<br>
+
+<div class="form-group">
+    <input id="search" class="form-control" type="text" placeholder="Rechercher....">
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>N° commande</th>
+            <th>Frs</th>
+            <th>Date</th>
+            <th>Total TTC</th>
+            <th scope="col">Actions</th> <!-- Changed to plural -->
+           
+        </tr>
+    </thead>
+    <tbody>
+        {% for commande in commandes %}
+            <tr>
+                <td>{{ commande.commande_number }}</td>
+                <td>{{ commande.customer.name }}</td>
+                <td>{{ commande.commande_date_time|date:"d F Y"|localize }}</td>
+                <td>{{ commande.Total_TTC }} DH</td>
+                <td>
+                    <!-- Bouton pour voir la commande -->
+                    <a href="{% url 'bon_commande' commande.pk %}" class="badge text-white bg-info" title="Voir">Voir</a>
+                    <a href="{% url 'delete_commande' commande.id  %}" class ="btn btn-outline-danger btn-sm">Supprimer </a>
+                    
+                </td>
+            </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+
+{% endblock %}
