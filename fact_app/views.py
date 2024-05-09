@@ -211,6 +211,25 @@ class CommandeDetailView(DetailView):
     template_name = 'bon_commande.html'  # Replace 'voir_commande.html' with your actual template name
     context_object_name = 'commande'
     pk_url_kwarg = 'pk'
+User
+# voir commande 
+
+class CommandeVisualizationView(View):
+    template_name = "bon_commande.html"
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        # Retrieve Commande object directly
+        obj = get_object_or_404(Commande, pk=pk)
+        
+
+        context = {
+            'obj': obj,
+           
+        }
+
+        return render(request, self.template_name, context)
+
 
 class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""

@@ -148,7 +148,7 @@
         <div class="col-lg-8">
             <div class="invoice-container">
                 <div class="invoice-header">
-                   <h4 style="color: #0b519c;">Bon de commande N° {{ obj.invoice_number }}</h4>
+                   <h4 style="color: #0b519c;">Bon de commande N° {{ obj.commande_number }}</h4>
 
                 </div>
 
@@ -165,10 +165,75 @@
                             <p>Email: brumartex.logistique@gmail.com</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong></strong> {{ obj.customer.name }}</p>
+                            <p><strong>Destinataire :</strong> <br> {{ obj.customer.name }}</p>
                             <p><strong></strong> {{ obj.customer.address }}, {{ obj.customer.city }}</p>
                         </div>
                     </div>
+                </div>
+
+                <div class="invoice-details mb-4">
+                    <div class="table-responsive">
+                        <table class="table table-bordered small-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>       
+                                    <td>{{ obj.commande_date_time|date:"d-m-Y" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Ref</th>
+                                <th>Designation</th>
+                                <th>Poids/Kg</th>
+                                <th>Quantité</th>
+                                <th>Prix au Kg HT</th>
+                                <th>Montant HT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr> 
+                                <td>{{ obj.ref }}</td>
+                                <td>{{ obj.designation }}</td>
+                                <td>{{ obj.Poids }}</td>
+                                <td>{{ obj.Qt }}</td>
+                                <td>{{ obj.Prix }}</td>
+                                <td>{{ obj.get_Montant }} DH</td>
+                            </tr>
+                            <tr>
+                                
+                                
+                                
+                                
+                                <td colspan="5" class="text-end"><strong>Total HT</strong></td>
+                                
+                                
+                                
+                                <td>{{obj.get_totalHT}} DH</td>
+                            </tr>
+                            <tr>
+                                
+                                <td colspan="5" class="text-end"><strong>Total TTC</strong></td>
+                               
+                                <td>{{obj.get_totalTTC}} DH</td>
+
+
+
+                            </tr>
+                        </tbody>
+
+                    </table>
                 </div>
 
 
@@ -178,7 +243,7 @@
                
 
                 
-
+<br>
                 <div class="invoice-footer">
                     <p>RC:91091-TP:52900494-IF:26110455-ICE:002081133000054-CNSS:1099247 ATTIJARI INTERNATIONAL BANK. RIB 605.640.00001.00000002971.46 <br> CODE SWIFT AIBSMAMT</p>
                 </div>

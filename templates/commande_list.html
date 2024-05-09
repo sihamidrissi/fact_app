@@ -7,17 +7,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commande List</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px; /* Add some space above the table */
         }
         th, td {
-            padding: 8px;
+            padding: 12px; /* Increase padding for better spacing */
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
         th {
             background-color: #f2f2f2;
+            font-weight: bold; /* Make header text bold */
+        }
+        .actions {
+            white-space: nowrap; /* Prevent actions from wrapping */
+        }
+        .actions a {
+            margin-right: 10px; /* Add space between action buttons */
+            text-decoration: none; /* Remove underline from action buttons */
+            padding: 6px 10px; /* Add padding to action buttons */
+            border: 1px solid #ccc; /* Add border to action buttons */
+            border-radius: 4px; /* Add border radius to action buttons */
+            color: #333; /* Set text color for action buttons */
+        }
+        .actions a:hover {
+            background-color: #f2f2f2; /* Change background color on hover */
+        }
+        .search-input {
+            width: 100%;
+            max-width: 300px; /* Limit width of search input */
+            margin-bottom: 20px; /* Add space below the search input */
+            padding: 8px; /* Add padding to search input */
+            border: 1px solid #ccc; /* Add border to search input */
+            border-radius: 4px; /* Add border radius to search input */
+            box-sizing: border-box; /* Include padding and border in the width */
         }
     </style>
 </head>
@@ -28,7 +56,7 @@
 <br>
 
 <div class="form-group">
-    <input id="search" class="form-control" type="text" placeholder="Rechercher....">
+    <input id="search" class="form-control search-input" type="text" placeholder="Rechercher....">
 </div>
 
 <table>
@@ -38,8 +66,7 @@
             <th>Frs</th>
             <th>Date</th>
             <th>Total TTC</th>
-            <th scope="col">Actions</th> <!-- Changed to plural -->
-           
+            <th class="actions">Actions</th> <!-- Changed to plural -->
         </tr>
     </thead>
     <tbody>
@@ -49,15 +76,13 @@
                 <td>{{ commande.customer.name }}</td>
                 <td>{{ commande.commande_date_time|date:"d F Y"|localize }}</td>
                 <td>{{ commande.Total_TTC }} DH</td>
-                <td>
+                <td class="actions">
                     <!-- Bouton pour voir la commande -->
-                    <a href="{% url 'bon_commande' commande.pk %}" class="badge text-white bg-info" title="Voir">Voir</a>
+                    <a href="{% url 'view-commande' commande.pk %}" class="badge text-white bg-info" title="Voir">Voir</a>
                     <a href="{% url 'delete_commande' commande.id  %}" class ="btn btn-outline-danger btn-sm">Supprimer </a>
-                    
                 </td>
             </tr>
         {% endfor %}
-        
     </tbody>
 </table>
 
