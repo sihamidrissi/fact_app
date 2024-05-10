@@ -7,18 +7,20 @@
 
     <form method="post">
         {% csrf_token %}
-        <div class="form-group col-md-2">
-            <label for="commande_number">Numéro de commande</label>
-            <input required name="commande_number" type="text" class="form-control" id="commande_number">
-        </div>
-        <div class="form-group">
-            <label for="customer">Client</label>
-            <select name="customer" class="form-control selectpicker" id="customer" data-live-search="true" title="Choisissez le client..." required>
-                <option selected disabled>Choisissez le fournisseur...</option>
-                {% for customer in customers %}
-                    <option value="{{ customer.id }}">{{ customer.name }}</option>
-                {% endfor %}
-            </select>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="commande_number">Numéro de commande</label>
+                <input required name="commande_number" type="text" class="form-control" id="commande_number">
+            </div>
+            <div class="form-group col-md-8">
+                <label for="customer">Fournisseur</label>
+                <select name="customer" class="form-control selectpicker" id="customer" data-live-search="true" title="Choisissez le client..." required>
+                    <option selected disabled>Choisissez le fournisseur...</option>
+                    {% for customer in customers %}
+                        <option value="{{ customer.id }}">{{ customer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
 
         <div id="wrapper">
@@ -36,8 +38,8 @@
                     <input required name="Poids" type="number" min="1" step="0.1" class="form-control" id="Poids-1">
                 </div>
                 <div class="form-group col-md-2">
-                    <label for="quantite-1">Quantité</label>
-                    <input required name="quantite" type="number" min="1" step="1" class="form-control" id="quantite-1">
+                    <label for="Qt-1">Quantité</label>
+                    <input required name="Qt" type="number" min="1" step="1" class="form-control" id="Qt-1">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="Prix-1">Prix au Kg HT</label>
@@ -77,7 +79,8 @@
     function calculateMontantHT(itemId) {
         let poids = parseFloat(document.getElementById(`Poids-${itemId}`).value);
         let prix = parseFloat(document.getElementById(`Prix-${itemId}`).value);
-        let montantHT = poids * prix;
+        let Qt = parseFloat(document.getElementById(`Qt-${itemId}`).value);
+        let montantHT = poids* Qt * prix;
         document.getElementById(`Montant_HT-${itemId}`).value = montantHT.toFixed(2);
         updateTotal();
     }
@@ -117,8 +120,8 @@
                     <input required name="Poids" type="number" min="1" step="0.1" class="form-control" id="Poids-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
                 </div>
                 <div class="form-group col-md-2">
-                    <label for="quantite-${itemNumber}">Quantité</label>
-                    <input required name="quantite" type="number" min="1" step="1" class="form-control" id="quantite-${itemNumber}">
+                    <label for="Qt-${itemNumber}">Quantité</label>
+                    <input required name="Qt" type="number" min="1" step="1" class="form-control" id="Qt-${itemNumber}">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="Prix-${itemNumber}">Prix au Kg HT</label>

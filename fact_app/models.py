@@ -143,7 +143,7 @@ class Commande(models.Model):
      
      @property
      def get_Montant(self):
-        Montant_HT = self.Poids * self.Prix  
+        Montant_HT = self.Poids* self.Qt * self.Prix  
         return Montant_HT
      
      @classmethod

@@ -33,6 +33,8 @@ from django.http import QueryDict
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from io import BytesIO
+
+
     
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -139,21 +141,21 @@ class AddCustomerView(LoginRequiredMixin, View):
 from django.views.generic import TemplateView
 
 class AddCommandeView(TemplateView):
-    """Add a new commande view"""
-    template_name = "commande.html"
+      """Add a new commande view"""
+      template_name = "commande.html"
 
-    def get(self, request, *args, **kwargs):
+      def get(self, request, *args, **kwargs):
         customers = Customer.objects.all()
         context = {'customers': customers}
         return render(request, self.template_name, context)
         
-    def post(self, request, *args, **kwargs):
+      def post(self, request, *args, **kwargs):
         customer_id = request.POST.get('customer')
         commande_number = request.POST.get('commande_number')
         ref = request.POST.get('ref')
         designation = request.POST.get('designation')
         poids = request.POST.get('Poids')
-        quantite = request.POST.get('quantite')
+        Qt = request.POST.get('Qt')
         prix = request.POST.get('Prix')
         montant_ht = request.POST.get('Montant_HT')
         total_ht = request.POST.get('Total_HT')
@@ -169,7 +171,7 @@ class AddCommandeView(TemplateView):
                 ref=ref,
                 designation=designation,
                 Poids=poids,
-                Qt=quantite,
+                Qt=Qt,
                 Prix=prix,
                 Montant_HT=montant_ht,
                 Total_HT=total_ht,
@@ -181,9 +183,9 @@ class AddCommandeView(TemplateView):
             messages.error(request, f"Une erreur s'est produite lors de l'enregistrement du bon de commande: {e}")
         
         return redirect('commande')  
+    
 
-
-
+#Liste de commande
 class CommandeListView(TemplateView):
     """View to display list of submitted commandes."""
     template_name = 'commande_list.html'
@@ -218,18 +220,16 @@ class CommandeVisualizationView(View):
     template_name = "bon_commande.html"
 
     def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
+       data = Commande.objects.all()
+       pk = kwargs.get('pk')
         # Retrieve Commande object directly
-        obj = get_object_or_404(Commande, pk=pk)
-        
+       obj = get_object_or_404(Commande, pk=pk)
+       context ={
+        "commandes" : data,
+         'obj': obj
+                 }
 
-        context = {
-            'obj': obj,
-           
-        }
-
-        return render(request, self.template_name, context)
-
+       return render(request, "bon_commande.html", context)
 
 class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""

@@ -202,15 +202,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            {% for commande in commandes   %}
                             <tr> 
-                                <td>{{ obj.ref }}</td>
-                                <td>{{ obj.designation }}</td>
-                                <td>{{ obj.Poids }}</td>
-                                <td>{{ obj.Qt }}</td>
-                                <td>{{ obj.Prix }}</td>
-                                <td>{{ obj.get_Montant }} DH</td>
+                                <td>{{ commande.ref }}</td>
+                                <td>{{ commande.designation }}</td>
+                                <td>{{ commande.Poids }}</td>
+                                <td>{{ commande.Qt }}</td>
+                                <td>{{ commande.Prix }}</td>
+                                <td>{{ commande.get_Montant }} DH</td>
                             </tr>
+                            {% endfor %}
                             <tr>
                                 
                                 
