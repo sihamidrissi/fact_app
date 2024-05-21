@@ -3,6 +3,10 @@
 {% load l10n %} <!-- Load l10n tag to enable date localization -->
 <html lang="fr">
 <head>
+        <!-- Other head elements -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commande List</title>
@@ -85,7 +89,7 @@
     <thead>
         <tr>
             <th>N° commande</th>
-            <th>Frs</th>
+            <th>Fournisseur</th>
             <th>Date</th>
             <th>Total TTC</th>
             <th class="actions">Actions</th> <!-- Changed to plural -->
@@ -101,7 +105,7 @@
                 <td class="actions">
                     <!-- Bouton pour voir la commande -->
                     <a href="{% url 'view-commande' commande.pk %}" class="btn btn-outline-info btn-sm" title="Voir">Voir</a>
-                    <a href="{% url 'delete_commande' commande.id  %}" class ="btn btn-outline-danger btn-sm">Supprimer </a>
+                    <a href="{% url 'delete_commande' commande.id %}" class ="btn btn-outline-danger btn-sm" onclick="return confirmDelete();">Supprimer </a>
                 </td>
             </tr>
         {% endfor %}
@@ -140,4 +144,9 @@
     </nav>
 </div>
 <!-- End Pagination -->
+<script>
+    function confirmDelete() {
+        return confirm("Êtes-vous sûr de vouloir supprimer cette commande ?");
+    }
+    </script>
 {% endblock %}

@@ -185,7 +185,6 @@ class AddCommandeView(TemplateView):
         return redirect('commande')  
     
 
-#Liste de commande
 class CommandeListView(TemplateView):
     """View to display list of submitted commandes."""
     template_name = 'commande_list.html'
@@ -194,30 +193,32 @@ class CommandeListView(TemplateView):
         context = super().get_context_data(**kwargs)
         commandes_list = Commande.objects.all()
         
-        # Pagination setup
-        paginator = Paginator(commandes_list, 3)  # 3 items per page
-        
         page = self.request.GET.get('page')
+
+        if page == 'all':
+            # Return all data without pagination
+            context['commandes'] = commandes_list
+        else:
+            # Paginate the results
+            paginator = Paginator(commandes_list, 3)  # 3 items per page
         
-        try:
-            commandes = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            commandes = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g., 9999), deliver last page of results.
-            commandes = paginator.page(paginator.num_pages)
+            try:
+                commandes = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                commandes = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g., 9999), deliver last page of results.
+                commandes = paginator.page(paginator.num_pages)
         
-        context['commandes'] = commandes
+            context['commandes'] = commandes
         return context
-
-
-
 from django.shortcuts import get_object_or_404
 
-def delete_commande(request, commande_number):
-    commande = get_object_or_404(Commande, commande_number=commande_number)
+def delete_commande(request, id):
+    commande = get_object_or_404(Commande, id=id)
     commande.delete()
+    messages.success(request, 'Commande supprimée avec succès.')
     return redirect('commande_list')
 
 
