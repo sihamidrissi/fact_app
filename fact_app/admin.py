@@ -16,8 +16,12 @@ class AdminInvoice(admin.ModelAdmin):
     def total_weight(self, obj):
         # Calculate and return the total weight for the invoice
         return sum(article.quantity for article in obj.article_set.all())
+    
+class AdminCommande(admin.ModelAdmin):
+    list_display=('customer','ref','designation','Total_TTC','commande_date_time ')
 
 admin.site.register(Customer, AdminCustomer)
 admin.site.register(Invoice, AdminInvoice)
 admin.site.register(Article)
 admin.site.register(Commande)
+admin.site.register(CommandeItem)

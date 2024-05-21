@@ -104,36 +104,38 @@
     let itemNumber = 1;
 
     document.getElementById('btn-add').addEventListener('click', function () {
-        itemNumber++;
-        let formAdd = `
-            <div class="form-row">
-                <div class="form-group col-md-1">
-                    <label for="ref-${itemNumber}">Référence</label>
-                    <input required name="ref" type="text" class="form-control" id="ref-${itemNumber}">
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="designation-${itemNumber}">Désignation</label>
-                    <input required name="designation" type="text" class="form-control" id="designation-${itemNumber}">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="Poids-${itemNumber}">Poids/Kg</label>
-                    <input required name="Poids" type="number" min="1" step="0.1" class="form-control" id="Poids-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="Qt-${itemNumber}">Quantité</label>
-                    <input required name="Qt" type="number" min="1" step="1" class="form-control" id="Qt-${itemNumber}">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="Prix-${itemNumber}">Prix au Kg HT</label>
-                    <input required name="Prix" type="number" min="1" step="0.01" class="form-control" id="Prix-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="Montant_HT-${itemNumber}">Montant HT</label>
-                    <input required name="Montant_HT" type="number" min="1" step="0.01" readonly class="form-control" id="Montant_HT-${itemNumber}">
-                </div>
-            </div>`;
-        document.getElementById('wrapper').insertAdjacentHTML('beforeend', formAdd);
-    });
+    itemNumber++;
+    let formAdd = `
+        <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="articles[${itemNumber}][ref]">Référence</label>
+                <input required name="articles[${itemNumber}][ref]" type="text" class="form-control" id="ref-${itemNumber}">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="articles[${itemNumber}][designation]">Désignation</label>
+                <input required name="articles[${itemNumber}][designation]" type="text" class="form-control" id="designation-${itemNumber}">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="articles[${itemNumber}][Poids]">Poids/Kg</label>
+                <input required name="articles[${itemNumber}][Poids]" type="number" min="1" step="0.1" class="form-control" id="Poids-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="articles[${itemNumber}][Qt]">Quantité</label>
+                <input required name="articles[${itemNumber}][Qt]" type="number" min="1" step="1" class="form-control" id="Qt-${itemNumber}">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="articles[${itemNumber}][Prix]">Prix au Kg HT</label>
+                <input required name="articles[${itemNumber}][Prix]" type="number" min="1" step="0.01" class="form-control" id="Prix-${itemNumber}" onchange="calculateMontantHT(${itemNumber})">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="articles[${itemNumber}][Montant_HT]">Montant HT</label>
+                <input required name="articles[${itemNumber}][Montant_HT]" type="number" min="1" step="0.01" readonly class="form-control" id="Montant_HT-${itemNumber}">
+            </div>
+        </div>`;
+    document.getElementById('wrapper').insertAdjacentHTML('beforeend', formAdd);
+});
+
+
 
     document.getElementById('btn-remove').addEventListener('click', function () {
         let lastChild = document.getElementById('wrapper').lastElementChild;

@@ -156,7 +156,28 @@ class Commande(models.Model):
         Total_TTC = cls.objects.aggregate(total=models.Sum('Montant_HT'))['total'] or 0
         return Total_TTC
      
-     
+
+class CommandeItem(models.Model):
+
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT,null=True, blank=True)
+    commande = models.ForeignKey(Commande, on_delete=models.PROTECT, null=True, blank=True)
+
+    ref = models.CharField(default='',max_length=200000000)
+    designation = models.CharField(default='',max_length=200000000)
+    Qt = models.IntegerField(default=0)
+    Prix = models.DecimalField(max_digits=100, decimal_places=2, default=0)
+    Poids= models.DecimalField(max_digits=100, decimal_places=2, default=0)
+    Montant_HT= models.DecimalField(max_digits=100, decimal_places=2, default=0)
+
+
+    class Meta:
+        verbose_name = 'CommandeItem'
+        verbose_name_plural = 'CommandeItems'
+   
+
+
+
+
 
 
 

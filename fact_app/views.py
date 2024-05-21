@@ -189,12 +189,29 @@ class AddCommandeView(TemplateView):
 class CommandeListView(TemplateView):
     """View to display list of submitted commandes."""
     template_name = 'commande_list.html'
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        commandes = Commande.objects.all()
+        commandes_list = Commande.objects.all()
+        
+        # Pagination setup
+        paginator = Paginator(commandes_list, 3)  # 3 items per page
+        
+        page = self.request.GET.get('page')
+        
+        try:
+            commandes = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            commandes = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g., 9999), deliver last page of results.
+            commandes = paginator.page(paginator.num_pages)
+        
         context['commandes'] = commandes
-        return context    
+        return context
+
+
 
 from django.shortcuts import get_object_or_404
 
@@ -515,5 +532,3 @@ def generate_pdf(request, invoice_number):
     response.write(buffer.getvalue())
     buffer.close()
     return response
-
-

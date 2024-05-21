@@ -81,7 +81,7 @@
     <input id="search" class="form-control search-input" type="text" placeholder="Rechercher....">
 </div>
 
-<table>
+<table class="table table-striped-columns">
     <thead>
         <tr>
             <th>N° commande</th>
@@ -100,12 +100,44 @@
                 <td>{{ commande.Total_TTC }} DH</td>
                 <td class="actions">
                     <!-- Bouton pour voir la commande -->
-                    <a href="{% url 'view-commande' commande.pk %}" class="badge text-white bg-info" title="Voir">Voir</a>
+                    <a href="{% url 'view-commande' commande.pk %}" class="btn btn-outline-info btn-sm" title="Voir">Voir</a>
                     <a href="{% url 'delete_commande' commande.id  %}" class ="btn btn-outline-danger btn-sm">Supprimer </a>
                 </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
-
+<!-- Pagination -->
+<div class="pagination justify-content-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <!-- Add the "Toute" button -->
+            <li class="page-item">
+                <a class="page-link" href="?page=all">Toute</a>
+            </li>
+            {% if commandes.has_other_pages %}
+            {% if commandes.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ commandes.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            {% for page_number in commandes.paginator.page_range %}
+            <li class="page-item {% if commandes.number == page_number %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+            {% endfor %}
+            {% if commandes.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ commandes.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+<!-- End Pagination -->
 {% endblock %}
