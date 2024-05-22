@@ -184,6 +184,8 @@ class AddCommandeView(TemplateView):
         
         return redirect('commande')  
     
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 class CommandeListView(TemplateView):
     """View to display list of submitted commandes."""
@@ -193,6 +195,14 @@ class CommandeListView(TemplateView):
         context = super().get_context_data(**kwargs)
         commandes_list = Commande.objects.all()
         
+        # Search functionality
+        search_query = self.request.GET.get('search')
+        if search_query:
+            commandes_list = commandes_list.filter(
+                Q(commande_number__icontains=search_query) | 
+                Q(customer__name__icontains=search_query)
+            )
+
         page = self.request.GET.get('page')
 
         if page == 'all':
@@ -213,6 +223,7 @@ class CommandeListView(TemplateView):
         
             context['commandes'] = commandes
         return context
+        
 from django.shortcuts import get_object_or_404
 
 def delete_commande(request, id):

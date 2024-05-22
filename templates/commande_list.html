@@ -3,10 +3,9 @@
 {% load l10n %} <!-- Load l10n tag to enable date localization -->
 <html lang="fr">
 <head>
-        <!-- Other head elements -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    
-    
+    <!-- Other head elements -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commande List</title>
@@ -81,10 +80,14 @@
 <h2 class="text-center">Liste des bons de commandes</h2>
 <br>
 
-<div class="form-group">
-    <input id="search" class="form-control search-input" type="text" placeholder="Rechercher....">
-</div>
-
+<form method="get" class="form-inline">
+    <div class="form-group">
+        <input id="search" class="form-control search-input" type="text" name="search" placeholder="Rechercher...">
+    </div>
+    <button type="submit" class="btn btn-primary ml-2">Rechercher</button>
+</form>
+<br>
+<br>
 <table class="table table-striped-columns">
     <thead>
         <tr>
@@ -105,7 +108,7 @@
                 <td class="actions">
                     <!-- Bouton pour voir la commande -->
                     <a href="{% url 'view-commande' commande.pk %}" class="btn btn-outline-info btn-sm" title="Voir">Voir</a>
-                    <a href="{% url 'delete_commande' commande.id %}" class ="btn btn-outline-danger btn-sm" onclick="return confirmDelete();">Supprimer </a>
+                    <a href="{% url 'delete_commande' commande.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete();">Supprimer</a>
                 </td>
             </tr>
         {% endfor %}
@@ -148,5 +151,5 @@
     function confirmDelete() {
         return confirm("Êtes-vous sûr de vouloir supprimer cette commande ?");
     }
-    </script>
+</script>
 {% endblock %}
