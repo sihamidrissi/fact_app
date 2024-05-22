@@ -141,48 +141,68 @@ class AddCustomerView(LoginRequiredMixin, View):
 from django.views.generic import TemplateView
 
 class AddCommandeView(TemplateView):
-      """Add a new commande view"""
-      template_name = "commande.html"
+    """Add a new commande view"""
+    template_name = "commande.html"
 
-      def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         customers = Customer.objects.all()
         context = {'customers': customers}
         return render(request, self.template_name, context)
-        
-      def post(self, request, *args, **kwargs):
+
+    def post(self, request, *args, **kwargs):
         customer_id = request.POST.get('customer')
         commande_number = request.POST.get('commande_number')
-        ref = request.POST.get('ref')
-        designation = request.POST.get('designation')
-        poids = request.POST.get('Poids')
-        Qt = request.POST.get('Qt')
-        prix = request.POST.get('Prix')
-        montant_ht = request.POST.get('Montant_HT')
         total_ht = request.POST.get('Total_HT')
         total_ttc = request.POST.get('Total_TTC')
-        
+
         try:
             customer = Customer.objects.get(id=customer_id)
             save_by = request.user
-            
-            Commande.objects.create(
+
+            # Create the Commande
+            commande = Commande.objects.create(
                 customer=customer,
                 commande_number=commande_number,
-                ref=ref,
-                designation=designation,
-                Poids=poids,
-                Qt=Qt,
-                Prix=prix,
-                Montant_HT=montant_ht,
                 Total_HT=total_ht,
                 Total_TTC=total_ttc,
                 save_by=save_by
             )
+            
+            # Iterate over the items and create CommandeItem for each
+            item_number = 1
+            while f'articles[{item_number}][ref]' in request.POST:
+                ref = request.POST.get(f'articles[{item_number}][ref]')
+                designation = request.POST.get(f'articles[{item_number}][designation]')
+                poids = request.POST.get(f'articles[{item_number}][Poids]')
+                qt = request.POST.get(f'articles[{item_number}][Qt]')
+                prix = request.POST.get(f'articles[{item_number}][Prix]')
+                montant_ht = request.POST.get(f'articles[{item_number}][Montant_HT]')
+
+                print(f"Item {item_number}: ref={ref}, designation={designation}, poids={poids}, qt={qt}, prix={prix}, montant_ht={montant_ht}")
+
+                # Ensure all necessary data is present before saving
+                if ref and designation and poids and qt and prix and montant_ht:
+                    CommandeItem.objects.create(
+                        customer=customer,
+                        commande=commande,
+                        ref=ref,
+                        designation=designation,
+                        Poids=poids,
+                        Qt=qt,
+                        Prix=prix,
+                        Montant_HT=montant_ht
+                    )
+                else:
+                    print(f"Missing data for item {item_number}, not saved.")
+                
+                item_number += 1
+
             messages.success(request, "Le bon de commande a été enregistré avec succès.")
         except Exception as e:
             messages.error(request, f"Une erreur s'est produite lors de l'enregistrement du bon de commande: {e}")
+            print(f"Exception: {e}")
         
-        return redirect('commande')  
+        return redirect('commande')
     
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -210,7 +230,7 @@ class CommandeListView(TemplateView):
             context['commandes'] = commandes_list
         else:
             # Paginate the results
-            paginator = Paginator(commandes_list, 3)  # 3 items per page
+            paginator = Paginator(commandes_list, 5)  # 3 items per page
         
             try:
                 commandes = paginator.page(page)
