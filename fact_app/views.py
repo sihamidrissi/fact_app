@@ -265,20 +265,23 @@ class CommandeDetailView(DetailView):
 User
 # voir commande 
 
+
 class CommandeVisualizationView(View):
     template_name = "bon_commande.html"
 
     def get(self, request, *args, **kwargs):
-       data = Commande.objects.all()
-       pk = kwargs.get('pk')
+        pk = kwargs.get('pk')
         # Retrieve Commande object directly
-       obj = get_object_or_404(Commande, pk=pk)
-       context ={
-        "commandes" : data,
-         'obj': obj
-                 }
+        obj = get_object_or_404(Commande, pk=pk)
+        # Get CommandeItem objects related to the Commande object
+        commande_items = CommandeItem.objects.filter(commande=obj)
+        
+        context = {
+            'obj': obj,
+            'commandes': commande_items
+        }
 
-       return render(request, "bon_commande.html", context)
+        return render(request, self.template_name, context)
 
 class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""

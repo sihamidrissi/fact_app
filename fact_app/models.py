@@ -156,6 +156,12 @@ class Commande(models.Model):
         Total_TTC = cls.objects.aggregate(total=models.Sum('Montant_HT'))['total'] or 0
         return Total_TTC
      
+     def delete(self, *args, **kwargs):
+        # Delete related CommandeItem objects
+        self.commandeitem_set.all().delete()
+        # Call the delete method of the superclass to delete the Commande instance
+        super().delete(*args, **kwargs)
+     
 
 class CommandeItem(models.Model):
 
@@ -168,6 +174,10 @@ class CommandeItem(models.Model):
     Prix = models.DecimalField(max_digits=100, decimal_places=2, default=0)
     Poids= models.DecimalField(max_digits=100, decimal_places=2, default=0)
     Montant_HT= models.DecimalField(max_digits=100, decimal_places=2, default=0)
+
+    def get_Montant(self):
+        Montant_HT = self.Poids* self.Qt * self.Prix  
+        return Montant_HT
 
 
     class Meta:
