@@ -355,20 +355,5 @@
         </div>
     </div>
 </div>
-<script>
-    // Function to show success message
-    function showSuccessMessage() {
-        alert("PDF has been registered successfully!");
-    }
 
-    // Function to detect when the print dialog is closed
-    window.onafterprint = function() {
-        showSuccessMessage(); // Call the function to show the success message
-    };
-
-    // Add an event listener to the print button
-    document.querySelector('.print-btn button').addEventListener('click', function() {
-        window.print(); // Initiate the print action
-    });
-</script>
 {% endblock content %}
