@@ -15,10 +15,11 @@ urlpatterns = [
     path('signout/', views.signout, name="signout"),
     path('change_password/', views.change_password, name='change_password'),
     path('generate-pdf/<int:invoice_id>/', views.generate_pdf, name='generate_pdf'),
-    path('admin/', admin.site.urls),
+    
     path('commande/', views.AddCommandeView.as_view(), name='commande'),
     path('commande_list/', views.CommandeListView.as_view(), name='commande_list'),
     path('view-commande/<int:pk>', views.CommandeVisualizationView.as_view(), name='view-commande'),
+    path('commande_pdf/', views.Commande_PDF, name='commande_pdf'),
     path('delete_commande/<int:id>/', views.delete_commande, name='delete_commande'),
 
 

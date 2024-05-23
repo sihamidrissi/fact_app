@@ -7,8 +7,111 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <style>
     /* Typography */
-    
+    .montant-ht-cell {
+    width: 100px; /* Adjust the width as needed */
+                  }
+    @media print {
+        .small-table {
+    width: 100%; /* Ensure table fills the container */
+    font-size: 18px; /* Adjust font size as needed */
+    background-color: #fff; /* White background */
+    border: 2px solid #1b1b1b; /* Lighter border */
+    color: #333; /* Darker text color */
+}
 
+.small-table th,
+.small-table td {
+    padding: 8px; /* Adjust padding as needed */
+    border: 1px solid #ddd; /* Lighter border */
+    font-size: 16px; /* Adjust font size as needed */
+}
+        .invoice-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transform: none;
+            width: auto;
+        }
+    /* Set page size to A4 */
+    @page {
+        size: A4;
+        margin: 0; /* Reset default margins */
+    }
+
+    /* Adjust body and heading font sizes */
+    body {
+        font-size: 20px; /* Adjust to desired font size */
+        color: #131313 !important; /* Change to desired color */
+        margin: 0; /* Reset default margin */
+    }
+
+    h4 {
+        font-size: 30px; /* Adjust to desired font size */
+        color: #0b519c !important; /* Change to desired color */
+        
+
+    }
+    .invoice-details p {
+        color: #333 !important; /* Change to desired color */
+    }
+       /* Adjust layout for address and recipient information */
+       .invoice-details .row {
+        display: flex; /* Use flexbox layout */
+        flex-wrap: wrap; /* Allow wrapping of flex items */
+    }
+
+    .invoice-details .col-md-6 {
+        width: 50%; /* Each column takes up 50% of the row width */
+    }
+
+    /* Adjust padding and margin for elements as needed */
+       /* Ensure the HTML and body elements fill the entire viewport */
+       html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .invoice-container {
+        border: 1px solid #ffffff;
+        border-radius: 10px;
+        background-color: #fff; /* White background */
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        width: 25cm; /* Width of A4 page */
+        height: 35cm; /* Height of A4 page */
+        margin: 0; /* Remove all margins */
+
+    }
+
+    
+    /* Increase table font size and adjust column width */
+    .table {
+        font-size: 18px; /* Adjust to desired font size */
+        width: 100%; /* Ensure the table fills the container */
+    }
+    .table td {
+    font-weight: normal;
+     }
+
+    /* Black border for table */
+    .table-bordered,
+    .table-bordered thead th,
+    .table-bordered tbody td {
+        border: 2px solid #3b3b3b !important; /* Change to black color */
+        color : #000 !important; /* Black text color */
+         
+    }
+    .invoice-footer{
+        font-size: 100px;
+        width: 100%;
+        font-size: 18px !important;
+    }
+    .montant-ht-cell {
+    width: 150px;
+                  }
+}
 
     body {
         font-family: 'Arial', sans-serif;
@@ -61,7 +164,7 @@
 
     /* Table */
     .table-bordered {
-        border: 1px solid #ddd; /* Lighter border */
+        border: 3px solid #1b1b1b; /* Lighter border */
         background-color: #fff; /* White background */
         color : #333;
     }
@@ -139,10 +242,21 @@
 
     /* Responsive Layout */
     @media print {
+        
+
         .print-btn,
         .copyright {
             display: none;
         }
+
+        .table-bordered,
+        .table-bordered thead th,
+        .table-bordered tbody td {
+        border: 2px solid #000; /* Change to desired border color */
+
+       
+    }
+
     }
 </style>
 
@@ -154,13 +268,14 @@
                    <h4 style="color: #0b519c;">Bon de commande N° {{ obj.commande_number }}</h4>
 
                 </div>
-
+                <br>
                 <div class="company-info text-center mb-4">
                     <img src="{% static 'images/logo2.jpg' %}" alt="BRUMARTEX" class="invoice-logo">
                     <h2>BRUMARTEX SARL AU</h2>
                     <p>IMPORT-EXPORT | SECOND HAND CLOTHES | FRIPERIE</p>
                 </div>
-
+                <br>
+                
                 <div class="invoice-details mb-4">
                     <div class="row">
                         <div class="col-md-6">
@@ -168,7 +283,7 @@
                             <p>Email: brumartex.logistique@gmail.com</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Destinataire :</strong> <br> {{ obj.customer.name }}</p>
+                            <p><strong>Destinataire :</strong> <br><strong> {{ obj.customer.name }}</strong></p>
                             <p><strong></strong> {{ obj.customer.address }}, {{ obj.customer.city }}</p>
                         </div>
                     </div>
@@ -200,7 +315,7 @@
                                 <th>Designation</th>
                                 <th>Poids/Kg</th>
                                 <th>Quantité</th>
-                                <th>Prix au Kg HT</th>
+                                <th>Prix/Kg HT</th>
                                 <th>Montant HT</th>
                             </tr>
                         </thead>
@@ -212,32 +327,48 @@
                                 <td>{{ item.Poids }}</td>
                                 <td>{{ item.Qt }}</td>
                                 <td>{{ item.Prix }}</td>
-                                <td>{{ item.get_Montant }} DH</td>
+                                <td class="montant-ht-cell">{{ item.get_Montant | floatformat:"2"  }} DH</td>
                             </tr>
                             {% endfor %}
                             <tr>
-                                <td colspan="5" class="text-end"><strong>Total HT</strong></td>
+                                <td colspan="5" class="text-end">Total HT</td>
                                 <td>{{ obj.Total_HT }} DH</td>
                             </tr>
                             <tr>
                                 <td colspan="5" class="text-end"><strong>Total TTC</strong></td>
-                                <td>{{ obj.Total_TTC }} DH</td>
+                                <td><strong>{{ obj.Total_TTC }} DH</strong></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="invoice-footer">
-                    <p>RC:91091-TP:52900494-IF:26110455-ICE:002081133000054-CNSS:1099247 ATTIJARI INTERNATIONAL BANK. RIB 605.640.00001.00000002971.46 <br> CODE SWIFT AIBSMAMT</p>
+                    <p><strong>RC:91091-TP:52900494-IF:26110455-ICE:002081133000054-CNSS:1099247 ATTIJARI INTERNATIONAL BANK. RIB 605.640.00001.00000002971.46 <br> CODE SWIFT AIBSMAMT</strong></p>
                 </div>
 
                 <div class="print-btn text-center">
                     <button class="btn btn-light" onclick="window.print()">
-                        <i class="fas fa-print"></i> Imprimer la facture
+                        <i class="fas fa-print"></i> Imprimer la commande
                     </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    // Function to show success message
+    function showSuccessMessage() {
+        alert("PDF has been registered successfully!");
+    }
+
+    // Function to detect when the print dialog is closed
+    window.onafterprint = function() {
+        showSuccessMessage(); // Call the function to show the success message
+    };
+
+    // Add an event listener to the print button
+    document.querySelector('.print-btn button').addEventListener('click', function() {
+        window.print(); // Initiate the print action
+    });
+</script>
 {% endblock content %}

@@ -103,7 +103,7 @@
             <tr>
                 <td>{{ commande.commande_number }}</td>
                 <td>{{ commande.customer.name }}</td>
-                <td>{{ commande.commande_date_time|date:"d F Y"|localize }}</td>
+                <td>{{ commande.commande_date_time|date:"d-m-Y"|localize }}</td>
                 <td>{{ commande.Total_TTC }} DH</td>
                 <td class="actions">
                     <!-- Bouton pour voir la commande -->

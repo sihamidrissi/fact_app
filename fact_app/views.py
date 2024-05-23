@@ -34,6 +34,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from io import BytesIO
 
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter 
+
 
     
 
@@ -282,6 +288,37 @@ class CommandeVisualizationView(View):
         }
 
         return render(request, self.template_name, context)
+    
+
+
+#commande PDF
+def Commande_PDF(request,kwargs):
+    buf= io.BytesIO()
+
+    c= canvas.Canvas(buf, pagesize=letter, bottomup=0)
+
+    textob = c.beginText()
+
+    textob.setTextOrigin(inch, inch)
+
+    textob.setFont("Helvetica", 14)
+
+    pk = kwargs.get('pk')
+    context = get_invoice(pk)
+    context['date'] = datetime.datetime.today()
+
+    template = get_template('view-commande.html')
+    html = template.render(context)
+    options = {'page-size': 'Letter', 'encoding': 'UTF-8', "enable-local-file-access": ""}
+    pdf = pdfkit.from_string(html, False, options)
+
+    response = HttpResponse(pdf, content_type='commande/pdf')
+    response['Content-Disposition'] = "attachment"
+    return response
+
+
+    
+
 
 class AddInvoiceView(LoginRequiredMixin, View):
     """Add a new invoice view"""

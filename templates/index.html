@@ -31,7 +31,7 @@
             <tr>
                 <th scope="row">{{ facture.pk }}</th>
                 <td>{{facture.customer.name}}</td>
-                <td>{{ facture.invoice_date_time|date:"d F Y"|localize }}</td>
+                <td>{{ facture.invoice_date_time|date:"d-m-Y"|localize }}</td>
                 <!-- Apply date filter with "d F Y" format for day, month, and year -->
                 <td>{{ facture.get_total }}</td>
                 <td>
