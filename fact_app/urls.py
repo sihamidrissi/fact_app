@@ -19,6 +19,7 @@ urlpatterns = [
     path('commande/', views.AddCommandeView.as_view(), name='commande'),
     path('commande_list/', views.CommandeListView.as_view(), name='commande_list'),
     path('view-commande/<int:pk>', views.CommandeVisualizationView.as_view(), name='view-commande'),
+    path('facture_avoir/<int:pk>/', views.InvoiceAvoir.as_view(), name='facture_avoir' ),
    
     path('delete_commande/<int:id>/', views.delete_commande, name='delete_commande'),
 

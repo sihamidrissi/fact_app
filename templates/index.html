@@ -32,7 +32,6 @@
                 <th scope="row">{{ facture.pk }}</th>
                 <td>{{facture.customer.name}}</td>
                 <td>{{ facture.invoice_date_time|date:"d-m-Y"|localize }}</td>
-                <!-- Apply date filter with "d F Y" format for day, month, and year -->
                 <td>{{ facture.get_total }}</td>
                 <td>
                     {% if facture.paid %}
@@ -54,6 +53,8 @@
                         data-id="{{facture.pk}}" data-customer="{{facture.customer.name}}"
                         class="badge text-dark bg-warning"> Modifier
                     </button>
+
+                    <a href="{% url 'facture_avoir' pk=facture.pk %}" title="Avoir" class="badge text-white bg-info">Avoir</a>
                 </td>
             </tr>
             {% endfor %}
@@ -182,6 +183,13 @@
         let customer = $(this).data('customer');
         $('#id_supprimer').val(invoice_id);
     })
+
+    // handling "avoir" action
+    $(document).on('click', '#btn-invoice-avoir', function(){
+        let invoice_id = $(this).data('id');
+        alert('Avoir action triggered for invoice ID: ' + invoice_id);
+        // Add your custom code for "avoir" action here
+    })
 </script>
 
 <script>
@@ -200,8 +208,6 @@ $(document).ready(function(){
         });
     });
 
-
- 
- </script>
+</script>
 
 {% endblock %}

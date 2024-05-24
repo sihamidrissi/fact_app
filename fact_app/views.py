@@ -394,6 +394,20 @@ class InvoiceVisualizationView(LoginRequiredMixin, View):
         context = get_invoice(pk)
         
         return render(request, self.template_name, context)
+    
+
+class InvoiceAvoir(LoginRequiredMixin,View):
+     """View to visualize the invoice"""
+
+     template_name = 'avoir.html'
+    
+
+     def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        context = get_invoice(pk)
+        
+        return render(request, self.template_name, context)
+
   
 @superuser_required
 def get_invoice_pdf(request, *args, **kwargs):
