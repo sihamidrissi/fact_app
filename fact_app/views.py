@@ -219,7 +219,9 @@ class CommandeListView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        commandes_list = Commande.objects.all()
+        
+        # Retrieve commandes list and reverse it
+        commandes_list = Commande.objects.all().order_by('-pk')
         
         # Search functionality
         search_query = self.request.GET.get('search')
@@ -236,7 +238,7 @@ class CommandeListView(TemplateView):
             context['commandes'] = commandes_list
         else:
             # Paginate the results
-            paginator = Paginator(commandes_list, 5)  # 3 items per page
+            paginator = Paginator(commandes_list, 5)  # 5 items per page
         
             try:
                 commandes = paginator.page(page)
@@ -249,7 +251,6 @@ class CommandeListView(TemplateView):
         
             context['commandes'] = commandes
         return context
-        
 from django.shortcuts import get_object_or_404
 
 def delete_commande(request, id):
